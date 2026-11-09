@@ -27,7 +27,6 @@ interface Commands {
   open_app_folder: { args: { which: "data" | "logs" }; result: null };
   check_update: { args: Record<string, never>; result: UpdateInfo | null };
   install_update: { args: { info: UpdateInfo }; result: "restart" | "exiting" };
-  open_release_page: { args: Record<string, never>; result: null };
   restart_app: { args: Record<string, never>; result: null };
   open_link: { args: { which: "website" | "email" }; result: null };
   get_settings: { args: Record<string, never>; result: Settings };
@@ -92,7 +91,6 @@ export const api = {
   appInfo: () => call("app_info"),
   checkUpdate: () => call("check_update"),
   installUpdate: (info: UpdateInfo) => call("install_update", { info }),
-  openReleasePage: () => call("open_release_page"),
   restartApp: () => call("restart_app"),
   openAppFolder: (which: "data" | "logs") => call("open_app_folder", { which }),
   openLink: (which: "website" | "email") => call("open_link", { which }),

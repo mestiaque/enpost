@@ -19,8 +19,7 @@ use tauri::{AppHandle, Emitter, Manager};
 use tokio::io::AsyncWriteExt;
 use ts_rs::TS;
 
-const API_LATEST: &str = "https://api.github.com/repos/mestiaque/NEPost/releases/latest";
-const RELEASES_PAGE: &str = "https://github.com/mestiaque/NEPost/releases/latest";
+const API_LATEST: &str = "https://api.github.com/repos/mestiaque/enpost/releases/latest";
 const ASSET_PREFIX: &str = "ENPost_";
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, TS)]
@@ -96,7 +95,7 @@ fn update_from_release(rel: &serde_json::Value, current: &str, kind: &Kind) -> O
     let mut info = UpdateInfo {
         version: format!("{}.{}.{}", v.0, v.1, v.2),
         notes: rel["body"].as_str().unwrap_or("").trim().to_string(),
-        page: rel["html_url"].as_str().unwrap_or(RELEASES_PAGE).to_string(),
+        page: rel["html_url"].as_str().unwrap_or_default().to_string(),
         asset_name: String::new(),
         url: String::new(),
         size: 0,
@@ -199,7 +198,7 @@ async fn download(app: &AppHandle, info: &UpdateInfo, dir: &Path) -> AppResult<P
 pub async fn install_update(app: AppHandle, info: UpdateInfo) -> AppResult<String> {
     let kind = install_kind();
     if !info.installable || kind == Kind::Unmanaged {
-        return Err(AppError::Validation(format!("This copy cannot update itself. Download the new version from {RELEASES_PAGE}")));
+        return Err(AppError::Validation("This copy cannot update itself (it is a development build).".into()));
     }
     let dir = app.path().app_cache_dir().map_err(|e| AppError::Internal(e.to_string()))?.join("updates");
     let file = download(&app, &info, &dir).await?;
@@ -258,13 +257,6 @@ pub async fn install_update(app: AppHandle, info: UpdateInfo) -> AppResult<Strin
         }
         Kind::Unmanaged => unreachable!(),
     }
-}
-
-/// Opens the releases page (fixed URL).
-#[tauri::command]
-pub fn open_release_page(app: AppHandle) -> AppResult<()> {
-    use tauri_plugin_opener::OpenerExt;
-    app.opener().open_url(RELEASES_PAGE, None::<&str>).map_err(|e| AppError::Internal(e.to_string()))
 }
 
 /// Start the freshly installed version after this process exits (a direct re-exec would be

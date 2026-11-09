@@ -59,7 +59,6 @@ pub fn run() {
             commands::app::open_link,
             commands::update::check_update,
             commands::update::install_update,
-            commands::update::open_release_page,
             commands::update::restart_app,
             commands::settings::get_settings,
             commands::settings::update_settings,

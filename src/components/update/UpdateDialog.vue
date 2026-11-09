@@ -35,7 +35,6 @@ async function start() {
   const i = info.value;
   if (!i) return;
   if (!i.installable) {
-    await api.openReleasePage().catch(() => {});
     upd.close();
     return;
   }
@@ -78,7 +77,7 @@ async function start() {
         <template v-else-if="phase === 'installed'">ENPost {{ info.version }} is installed. Restart to use it.</template>
         <template v-else-if="phase === 'exiting'">Installing… ENPost will restart by itself.</template>
         <template v-else-if="phase === 'idle'">
-          {{ info.installable ? "The update downloads, is checked against its published SHA-256, and installs in place. Your collections, history and settings are kept." : "This copy was not installed from a package, so it cannot update itself. Download the new version from the release page." }}
+          {{ info.installable ? "The update downloads, is checked against its published SHA-256, and installs in place. Your collections, history and settings are kept." : "This is a development build, so it cannot update itself. Copies installed from the ENPost installer, .deb or AppImage update in place." }}
         </template>
       </div>
       <div class="flex justify-end gap-2">
@@ -87,8 +86,8 @@ async function start() {
           <Button variant="primary" @click="api.restartApp()">Restart now</Button>
         </template>
         <template v-else>
-          <Button :disabled="busy" @click="upd.close()">Later</Button>
-          <Button variant="primary" :disabled="busy" @click="start">{{ phase === "error" ? "Try again" : info.installable ? "Update now" : "Open download page" }}</Button>
+          <Button v-if="info.installable" :disabled="busy" @click="upd.close()">Later</Button>
+          <Button variant="primary" :disabled="busy" @click="start">{{ phase === "error" ? "Try again" : info.installable ? "Update now" : "OK" }}</Button>
         </template>
       </div>
     </div>
