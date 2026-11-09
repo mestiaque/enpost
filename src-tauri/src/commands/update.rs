@@ -308,19 +308,19 @@ mod tests {
 
     #[test]
     fn picks_the_asset_for_this_install() {
-        let deb = update_from_release(&release("v9.0.0"), "0.1.0", &Kind::Deb).unwrap();
+        let deb = update_from_release(&release("v9.0.0"), "0.1.1", &Kind::Deb).unwrap();
         assert_eq!((deb.asset_name.as_str(), deb.notes.as_str(), deb.installable), ("ENPost_9.0.0_amd64.deb", "Fixes", true));
         assert_eq!(deb.sha256, "a".repeat(64));
-        assert_eq!(update_from_release(&release("v9.0.0"), "0.1.0", &Kind::AppImage("/x".into())).unwrap().asset_name, "ENPost_9.0.0_amd64.AppImage");
-        assert_eq!(update_from_release(&release("v9.0.0"), "0.1.0", &Kind::Windows).unwrap().asset_name, "ENPost_9.0.0_x64-setup.exe");
-        assert!(!update_from_release(&release("v9.0.0"), "0.1.0", &Kind::Unmanaged).unwrap().installable);
-        assert!(update_from_release(&release("v0.1.0"), "0.1.0", &Kind::Deb).is_none(), "same version is no update");
+        assert_eq!(update_from_release(&release("v9.0.0"), "0.1.1", &Kind::AppImage("/x".into())).unwrap().asset_name, "ENPost_9.0.0_amd64.AppImage");
+        assert_eq!(update_from_release(&release("v9.0.0"), "0.1.1", &Kind::Windows).unwrap().asset_name, "ENPost_9.0.0_x64-setup.exe");
+        assert!(!update_from_release(&release("v9.0.0"), "0.1.1", &Kind::Unmanaged).unwrap().installable);
+        assert!(update_from_release(&release("v0.1.1"), "0.1.1", &Kind::Deb).is_none(), "same version is no update");
     }
 
     #[test]
     fn no_checksum_means_not_installable() {
         let mut rel = release("v9.0.0");
         rel["assets"][2]["digest"] = serde_json::Value::Null;
-        assert!(!update_from_release(&rel, "0.1.0", &Kind::Deb).unwrap().installable);
+        assert!(!update_from_release(&rel, "0.1.1", &Kind::Deb).unwrap().installable);
     }
 }
