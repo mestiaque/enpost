@@ -23,6 +23,8 @@ import type {
 
 interface Commands {
   app_info: { args: Record<string, never>; result: AppInfo };
+  open_app_folder: { args: { which: "data" | "logs" }; result: null };
+  open_link: { args: { which: "website" | "source" | "issues" | "email" }; result: null };
   get_settings: { args: Record<string, never>; result: Settings };
   update_settings: { args: { patch: SettingsPatch }; result: Settings };
   reset_settings: { args: Record<string, never>; result: Settings };
@@ -83,6 +85,8 @@ export async function call<K extends CommandName>(cmd: K, ...args: Commands[K]["
 
 export const api = {
   appInfo: () => call("app_info"),
+  openAppFolder: (which: "data" | "logs") => call("open_app_folder", { which }),
+  openLink: (which: "website" | "source" | "issues" | "email") => call("open_link", { which }),
   getSettings: () => call("get_settings"),
   updateSettings: (patch: SettingsPatch) => call("update_settings", { patch }),
   resetSettings: () => call("reset_settings"),

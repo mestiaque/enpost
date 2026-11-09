@@ -101,11 +101,11 @@ const rawBody = computed(() => ["json", "text", "xml"].includes(d.value.bodyType
         :model-value="d.headers"
         @update:model-value="tabs.edit(tab.id, (x) => (x.headers = $event))"
       />
-      <div v-else-if="section === 'body'" class="flex h-full min-h-[160px] flex-col gap-3">
-        <div class="overflow-x-auto"><Segmented :model-value="d.bodyType" :options="bodyOptions" @update:model-value="(v: BodyType) => tabs.edit(tab.id, (x) => (x.bodyType = v))" /></div>
+      <div v-else-if="section === 'body'" class="flex h-full min-h-[120px] flex-col gap-3">
+        <div class="shrink-0 overflow-x-auto"><Segmented :model-value="d.bodyType" :options="bodyOptions" @update:model-value="(v: BodyType) => tabs.edit(tab.id, (x) => (x.bodyType = v))" /></div>
         <p v-if="noBodyMethod && d.bodyType !== 'none'" class="text-[11px] text-warning">{{ d.method }} requests are sent without a body. Choose another method to send it.</p>
         <p v-if="d.bodyType === 'none'" class="text-xs text-muted">This request has no body.</p>
-        <div v-else-if="rawBody" class="min-h-[140px] flex-1 overflow-hidden rounded-md border border-line bg-panel focus-within:border-accent">
+        <div v-else-if="rawBody" class="min-h-[72px] flex-1 overflow-hidden rounded-md border border-line bg-panel focus-within:border-accent">
           <CodeEditor
             :model-value="d.body"
             :language="LANG[d.bodyType as 'json' | 'xml' | 'text']"

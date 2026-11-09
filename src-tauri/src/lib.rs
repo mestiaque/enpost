@@ -25,6 +25,7 @@ pub fn run() {
             }
         }))
         .plugin(tauri_plugin_dialog::init())
+        .plugin(tauri_plugin_opener::init())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(if cfg!(debug_assertions) { log::LevelFilter::Debug } else { log::LevelFilter::Info })
@@ -54,6 +55,8 @@ pub fn run() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::app::app_info,
+            commands::app::open_app_folder,
+            commands::app::open_link,
             commands::settings::get_settings,
             commands::settings::update_settings,
             commands::settings::reset_settings,

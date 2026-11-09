@@ -144,7 +144,7 @@ const menuItem = "flex cursor-default items-center rounded px-2 py-1.5 text-[13p
     <div class="flex h-10 shrink-0 items-center gap-1 pl-2 pr-1.5">
       <select
         :value="ws.activeId"
-        class="h-7 min-w-0 flex-1 truncate rounded-md bg-transparent px-1.5 text-[12px] font-semibold uppercase tracking-wider text-faint outline-none hover:bg-raised hover:text-fg"
+        class="h-7 min-w-0 flex-1 truncate rounded-md bg-transparent px-2 text-[12px] font-semibold text-muted outline-none hover:bg-raised hover:text-fg"
         aria-label="Workspace"
         @change="ws.switchTo(($event.target as HTMLSelectElement).value)"
       >

@@ -43,10 +43,10 @@ const cell = "h-8 w-full bg-transparent px-2.5 font-mono text-[length:var(--edit
     <div v-for="r in rows" :key="r.id" class="group grid grid-cols-[32px_1fr_1fr_32px] border-b border-line last:border-b-0" role="row">
       <label class="flex items-center justify-center">
         <input
+          v-if="!isTrailing(r)"
           type="checkbox"
           class="h-3.5 w-3.5 accent-[rgb(var(--accent))]"
           :checked="r.enabled"
-          :disabled="isTrailing(r)"
           :aria-label="`Enable ${r.key || 'row'}`"
           @change="change(r, { enabled: ($event.target as HTMLInputElement).checked })"
         />

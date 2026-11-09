@@ -92,6 +92,11 @@ textarea,
   border-color: rgb(255 255 255 / 0.16) !important;
   backdrop-filter: blur(30px) saturate(1.5);
 }
+/* The work area lets the aurora through too (it was solid, unlike the sidebar). */
+.glass main .bg-bg {
+  background-color: rgb(12 10 26 / 0.55) !important;
+  backdrop-filter: blur(18px);
+}
 .glass input.bg-bg,
 .glass header input {
   background-color: rgb(255 255 255 / 0.08) !important;
@@ -117,9 +122,55 @@ textarea,
   background-color: rgb(var(--faint));
 }
 
-:focus-visible {
-  outline: 2px solid rgb(var(--accent));
-  outline-offset: 1px;
+/* Selects in the app's style instead of the toolkit's (WebKitGTK drew a heavy GTK box). */
+@layer base {
+  select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238e8e9a' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 12px;
+    padding-right: 1.75rem !important;
+  }
+  select option {
+    background-color: rgb(var(--panel));
+    color: rgb(var(--fg));
+  }
+  /* Checkboxes in the app's style: an accent-filled box with a white tick. */
+  input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    flex-shrink: 0;
+    border: 1.5px solid rgb(var(--faint));
+    border-radius: 4px;
+    background-color: transparent;
+    cursor: default;
+    transition: background-color 0.12s, border-color 0.12s;
+  }
+  input[type="checkbox"]:hover {
+    border-color: rgb(var(--muted));
+  }
+  input[type="checkbox"]:checked {
+    border-color: rgb(var(--accent));
+    background-color: rgb(var(--accent));
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5'/%3E%3C/svg%3E");
+    background-size: 78%;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  input[type="checkbox"]:disabled {
+    opacity: 0.4;
+  }
+}
+
+/* In the base layer so a component's `outline-none` (utilities layer) wins: fields inside a
+   bordered box show focus on the box, not as a second ring on the field. */
+@layer base {
+  :focus-visible {
+    outline: 2px solid rgb(var(--accent));
+    outline-offset: 1px;
+  }
 }
 
 .reduce-motion *,

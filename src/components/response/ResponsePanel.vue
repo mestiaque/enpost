@@ -92,8 +92,8 @@ const tree = ref<InstanceType<typeof JsonTree> | null>(null);
 <template>
   <section class="flex h-full min-h-0 flex-col" aria-label="Response">
     <!-- Summary bar -->
-    <div class="flex h-9 shrink-0 items-center gap-4 border-b border-line px-3 text-[12px]">
-      <span class="text-[11px] font-semibold uppercase tracking-wider text-faint">Response</span>
+    <div class="flex h-9 shrink-0 items-center gap-4 overflow-hidden whitespace-nowrap border-b border-line px-3 text-[12px]">
+      <span class="hidden text-[11px] font-semibold uppercase tracking-wider text-faint sm:inline">Response</span>
       <template v-if="res">
         <span :class="['font-semibold tabular-nums', statusColor(res.status)]">{{ res.status }} {{ res.statusText }}</span>
         <Tooltip :label="`Waiting ${formatMs(res.timing.ttfbMs)} · download ${formatMs(res.timing.downloadMs)}`">
@@ -102,9 +102,9 @@ const tree = ref<InstanceType<typeof JsonTree> | null>(null);
         <Tooltip :label="`Body ${formatBytes(res.body.bytes)} · headers ${formatBytes(res.headersBytes)}`">
           <span class="tabular-nums text-muted">{{ formatBytes(res.body.bytes) }}</span>
         </Tooltip>
-        <span class="text-faint">{{ res.httpVersion }}</span>
+        <span class="hidden text-faint lg:inline">{{ res.httpVersion }}</span>
         <span class="flex-1" />
-        <div class="flex gap-1">
+        <div class="flex shrink-0 gap-1">
           <button v-for="s in (['body', 'headers', 'cookies'] as const)" :key="s" type="button" :class="['rounded px-2 py-0.5 capitalize', section === s ? 'bg-raised text-fg' : 'text-muted hover:text-fg']" @click="section = s">
             {{ s }}<span v-if="s === 'headers'" class="ml-1 text-faint">{{ res.headers.length }}</span><span v-if="s === 'cookies' && res.cookies.length" class="ml-1 text-faint">{{ res.cookies.length }}</span>
           </button>

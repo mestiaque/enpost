@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import { Check } from "lucide-vue-next";
-import { computed, onMounted, ref } from "vue";
+import { computed, ref } from "vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import Kbd from "@/components/ui/Kbd.vue";
 import Select from "@/components/ui/Select.vue";
 import Switch from "@/components/ui/Switch.vue";
+import AboutSection from "./AboutSection.vue";
 import SettingRow from "./SettingRow.vue";
-import appIcon from "@/assets/enpost-icon.svg";
 import { SHORTCUTS } from "@/composables/useShortcuts";
-import { api, inTauri } from "@/services/ipc";
 import { useSettings } from "@/stores/settings";
 import { useUi } from "@/stores/ui";
-import type { AppInfo, Settings, Theme } from "@/types";
+import type { Settings, Theme } from "@/types";
 
 const ui = useUi();
 const store = useSettings();
@@ -94,10 +93,6 @@ async function resetAll() {
   ui.toast({ kind: "success", title: "Settings reset" });
 }
 
-const info = ref<AppInfo | null>(null);
-onMounted(async () => {
-  if (inTauri()) info.value = await api.appInfo().catch(() => null);
-});
 </script>
 
 <template>
@@ -197,27 +192,7 @@ onMounted(async () => {
           </div>
         </template>
 
-        <template v-else>
-          <div class="space-y-2 py-4 text-[13px]">
-            <div class="flex items-center gap-3.5 pb-2">
-              <img :src="appIcon" alt="" class="h-16 w-16" draggable="false" />
-              <div>
-                <div class="text-lg font-semibold">ENPost {{ info?.version }}</div>
-                <div class="text-muted">API development and testing, offline and local-first.</div>
-              </div>
-            </div>
-            <div v-if="info" class="space-y-1 text-[12px] text-faint">
-              <div>{{ info.platform }} · {{ info.arch }} · database schema v{{ info.schemaVersion }}</div>
-              <div>Data: <span class="font-mono">{{ info.dataDir }}</span></div>
-            </div>
-            <div class="pt-3 text-[11px] font-semibold uppercase tracking-wider text-faint">Developer</div>
-            <div class="divide-y divide-line rounded-lg bg-raised px-3">
-              <div class="flex items-center justify-between py-2.5"><span>Developed by</span><span class="text-muted">M. Estiaque Ahmed Khan</span></div>
-              <div class="flex items-center justify-between py-2.5"><span>Contact</span><span class="text-muted">info@mestiaque.com</span></div>
-              <div class="flex items-center justify-between py-2.5"><span>Licence</span><span class="text-muted">MIT</span></div>
-            </div>
-          </div>
-        </template>
+        <AboutSection v-else />
       </div>
     </div>
   </Dialog>
