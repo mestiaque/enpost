@@ -1,4 +1,4 @@
-//! In-app updates from GitHub releases, the same mechanism as ENViewer and ENDownloader.
+//! In-app updates from GitHub releases, the same mechanism as ENViewer and ENSave.
 //!
 //! * `check_update`   – asks the GitHub API for the latest release (only when the user allows
 //!                      it: Settings → General);

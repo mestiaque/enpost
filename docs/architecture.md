@@ -2,7 +2,7 @@
 
 ENPost is a desktop app for building, sending and testing API requests. It works offline and
 keeps its data on the user's computer. It runs on Ubuntu and Windows, and it is the sister app
-of ENViewer, ENDownloader and ENPlayer. It looks and behaves like them: the same frameless
+of ENViewer, ENSave and ENPlayer. It looks and behaves like them: the same frameless
 window, the same Dark, Light, Glass and System themes, accent colours and component style.
 
 This document covers how the app is built and why. [ROADMAP.md](ROADMAP.md) tracks progress.

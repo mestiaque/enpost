@@ -3,7 +3,7 @@
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
 mkdir -p "$HOME/.cargo/registry"
-IMAGE="${ENPOST_IMAGE:-endl-build}"  # same toolchain image as ENDownloader
+IMAGE="${ENPOST_IMAGE:-endl-build}"  # same toolchain image as ENSave
 docker image inspect "$IMAGE" >/dev/null 2>&1 || IMAGE=lumen-build
 # A passwd entry for the host user (dbus refuses to start for an unknown UID).
 mkdir -p "$ROOT/target"

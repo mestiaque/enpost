@@ -94,7 +94,7 @@ const row = "flex items-center justify-between gap-4 py-2.5";
           <span>Website</span>
           <button type="button" class="flex items-center gap-1 text-accent hover:underline" @click="run(api.openLink('website'), 'the website')">mestiaque.com<ExternalLink class="h-3 w-3" /></button>
         </div>
-        <div :class="row"><span>Also by the developer<span class="block text-[11px] text-faint">Same look and themes</span></span><span class="text-muted">ENViewer · ENDownloader · ENPlayer</span></div>
+        <div :class="row"><span>Also by the developer<span class="block text-[11px] text-faint">Same look and themes</span></span><span class="text-muted">ENViewer · ENSave · ENPlayer</span></div>
         <div :class="row"><span>Licence</span><span class="text-muted">© 2026 M. Estiaque Ahmed Khan · MIT</span></div>
       </div>
     </section>

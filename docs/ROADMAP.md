@@ -9,7 +9,7 @@ verified, ⬜ = open.
 saved in SQLite and a typed IPC path tested end to end.*
 
 - ✅ Tauri 2 + Vue 3 + TypeScript (strict) + Vite project, pnpm, Cargo workspace
-- ✅ Tailwind design system ported from ENViewer and ENDownloader (tokens, Dark, Light, Glass, System, accent colours)
+- ✅ Tailwind design system ported from ENViewer and ENSave (tokens, Dark, Light, Glass, System, accent colours)
 - ✅ UI kit: Button, IconButton, Tooltip, Kbd, Input, Switch, Select, Segmented, Dialog, Toaster, confirm dialog, ResizeHandle, EmptyState, WindowControls
 - ✅ Layout: title bar (drag, maximise), activity bar, collections sidebar (resizable, collapsible), request tabs, request editor and response panel (resizable split), status bar
 - ✅ Request tabs: new, close, close others, duplicate, middle-click close, drag to reorder, unsaved dot, Ctrl+T/W/Tab
@@ -84,6 +84,6 @@ tested against a local server (Rust integration tests) and in the real app (smok
 - ⬜ Security review, performance pass
 - ⬜ Developer utilities (JWT, JSON tools, Base64, URL, UUID, timestamps, hashes, regex, cURL generator, status reference)
 - ⬜ Backup and restore
-- ✅ In-app updates (same mechanism as ENViewer and ENDownloader): daily check, Check now, checksum-verified install (done early, with the settings polish)
+- ✅ In-app updates (same mechanism as ENViewer and ENSave): daily check, Check now, checksum-verified install (done early, with the settings polish)
 - ⬜ Signed release pipeline
 - ⬜ User guide with screenshots

@@ -1,7 +1,7 @@
 # ENPost
 
 An offline-first desktop app for building, sending and testing API requests, for **Ubuntu** and
-**Windows**. Built with Tauri 2, Rust and Vue 3. Sister app of ENViewer, ENDownloader and
+**Windows**. Built with Tauri 2, Rust and Vue 3. Sister app of ENViewer, ENSave and
 ENPlayer, with the same look and themes.
 
 **Status: Phase 2 (HTTP engine) is done.** ENPost sends real HTTP requests from its Rust
@@ -94,7 +94,7 @@ npx pnpm@9.15.0 tauri dev          # run the app with hot reload
 ```
 
 Without the WebKit packages on the host, build in Docker (the toolchain image shared with
-ENDownloader):
+ENSave):
 
 ```bash
 docker build -t endl-build scripts/docker            # once

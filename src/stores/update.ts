@@ -16,7 +16,7 @@ function lastCheck(): number {
   }
 }
 
-/** New releases on GitHub (same behaviour as ENViewer and ENDownloader). */
+/** New releases on GitHub (same behaviour as ENViewer and ENSave). */
 export const useUpdate = defineStore("update", () => {
   const available = ref<UpdateInfo | null>(null);
   const dialogOpen = ref(false);
