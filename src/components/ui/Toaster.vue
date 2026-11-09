@@ -14,6 +14,7 @@ const ui = useUi();
       <div class="min-w-0 flex-1">
         <div class="text-[13px] font-medium">{{ t.title }}</div>
         <div v-if="t.detail" class="mt-0.5 break-words text-xs text-muted">{{ t.detail }}</div>
+        <button v-if="t.action" type="button" class="mt-1.5 text-xs font-medium text-accent hover:underline" @click="t.action.run(); ui.dismiss(t.id)">{{ t.action.label }}</button>
       </div>
       <button class="h-5 w-5 shrink-0 rounded text-faint hover:text-fg" aria-label="Dismiss" @click="ui.dismiss(t.id)"><X class="h-3.5 w-3.5" /></button>
     </div>

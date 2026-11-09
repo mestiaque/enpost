@@ -5,3 +5,4 @@ pub mod collections;
 pub mod history;
 pub mod http;
 pub mod settings;
+pub mod update;

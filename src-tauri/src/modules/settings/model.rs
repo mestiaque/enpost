@@ -17,10 +17,26 @@ pub enum Theme {
     System,
 }
 
+/// What ENPost shows when it starts.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize, TS)]
+#[serde(rename_all = "camelCase")]
+#[ts(export)]
+pub enum Startup {
+    /// One empty request tab.
+    Blank,
+    /// The tabs that were open when ENPost was closed.
+    Restore,
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, TS)]
 #[serde(rename_all = "camelCase", default)]
 #[ts(export)]
 pub struct Settings {
+    // General
+    pub startup: Startup,
+    pub always_on_top: bool,
+    /// Ask before closing a tab whose changes are not saved.
+    pub confirm_close_unsaved: bool,
     // Appearance
     pub theme: Theme,
     /// `#rrggbb`
@@ -60,6 +76,9 @@ pub struct Settings {
 impl Default for Settings {
     fn default() -> Self {
         Self {
+            startup: Startup::Restore,
+            always_on_top: false,
+            confirm_close_unsaved: true,
             theme: Theme::Dark,
             accent: "#3b82f6".into(),
             reduce_motion: false,
@@ -87,6 +106,9 @@ impl Default for Settings {
 #[serde(rename_all = "camelCase", default)]
 #[ts(export, optional_fields)]
 pub struct SettingsPatch {
+    pub startup: Option<Startup>,
+    pub always_on_top: Option<bool>,
+    pub confirm_close_unsaved: Option<bool>,
     pub theme: Option<Theme>,
     pub accent: Option<String>,
     pub reduce_motion: Option<bool>,
@@ -178,7 +200,7 @@ impl Settings {
             ($($f:ident),*) => { $( if let Some(v) = &p.$f { s.$f = v.clone(); } )* };
         }
         set!(
-            theme, accent, reduce_motion, editor_font_size, editor_font_family, editor_word_wrap, sidebar_collapsed, sidebar_width, editor_split,
+            startup, always_on_top, confirm_close_unsaved, theme, accent, reduce_motion, editor_font_size, editor_font_family, editor_word_wrap, sidebar_collapsed, sidebar_width, editor_split,
             request_timeout_ms, follow_redirects, max_redirects, verify_tls, proxy_url, autosave, history_retention_days, check_updates, active_workspace_id
         );
         s

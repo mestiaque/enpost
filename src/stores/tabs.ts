@@ -200,6 +200,60 @@ export const useTabs = defineStore("tabs", () => {
     });
   }
 
+  // ---- closing with unsaved changes ----
+
+  /** Changes that would be lost: dirty and not about to be autosaved. */
+  function unsaved(t: RequestTab) {
+    return t.dirty && (!t.savedId || !useSettings().settings.autosave) && (t.savedId !== undefined || t.draft.url.trim() !== "" || t.draft.body !== "");
+  }
+
+  /** Close from the UI: asks first when changes would be lost (Settings → General). */
+  async function requestClose(id: string) {
+    const t = tabs.value.find((x) => x.id === id);
+    if (!t) return;
+    if (unsaved(t) && useSettings().settings.confirmCloseUnsaved) {
+      const ok = await useUi().confirm({ title: `Close "${t.name}"?`, message: "Its changes are not saved and will be lost.", confirmLabel: "Close without saving", danger: true });
+      if (!ok) return;
+    }
+    close(id);
+  }
+
+  async function requestCloseOthers(id: string) {
+    const lost = tabs.value.filter((t) => t.id !== id && unsaved(t));
+    if (lost.length && useSettings().settings.confirmCloseUnsaved) {
+      const ok = await useUi().confirm({ title: `Close ${tabs.value.length - 1} tabs?`, message: `${lost.length} of them ${lost.length === 1 ? "has" : "have"} changes that are not saved.`, confirmLabel: "Close without saving", danger: true });
+      if (!ok) return;
+    }
+    closeOthers(id);
+  }
+
+  // ---- session (reopen tabs on the next start) ----
+
+  const SESSION_KEY = "enpost.session";
+  /** Open tabs and their drafts, for "Reopen the tabs from last time". Responses are not kept. */
+  function saveSession() {
+    try {
+      const data = { active: tabs.value.findIndex((t) => t.id === activeId.value), tabs: tabs.value.map((t) => ({ name: t.name, draft: t.draft, dirty: t.dirty, savedId: t.savedId })) };
+      localStorage.setItem(SESSION_KEY, JSON.stringify(data));
+    } catch {
+      /* storage unavailable: the session is simply not restored */
+    }
+  }
+  /** Reopen the last session's tabs; returns false when there is nothing to restore. */
+  function restoreSession(): boolean {
+    try {
+      const raw = localStorage.getItem(SESSION_KEY);
+      if (!raw) return false;
+      const data = JSON.parse(raw) as { active: number; tabs: { name: string; draft: RequestDraft; dirty: boolean; savedId?: string }[] };
+      if (!Array.isArray(data.tabs) || !data.tabs.length) return false;
+      tabs.value = data.tabs.map((t) => ({ id: newId(), name: String(t.name), draft: { ...newDraft(), ...t.draft }, dirty: Boolean(t.dirty), exec: { state: "idle" as const }, ...(t.savedId ? { savedId: t.savedId } : {}) }));
+      activeId.value = tabs.value[Math.max(0, Math.min(data.active, tabs.value.length - 1))]?.id ?? null;
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   /** Send the tab's request through the Rust engine; progress and result land on the tab. */
   async function send(id: string) {
     const t = tabs.value.find((x) => x.id === id);
@@ -235,5 +289,5 @@ export const useTabs = defineStore("tabs", () => {
     if (t?.exec.state === "sending") void api.cancelRequest(t.exec.requestId).catch(() => {});
   }
 
-  return { tabs, activeId, active, open, openSaved, save, saveAs, syncWithTree, send, cancel, activate, close, closeOthers, duplicate, move, cycle, edit, setUrl, setParams, setMethod };
+  return { tabs, activeId, active, open, requestClose, requestCloseOthers, saveSession, restoreSession, openSaved, save, saveAs, syncWithTree, send, cancel, activate, close, closeOthers, duplicate, move, cycle, edit, setUrl, setParams, setMethod };
 });

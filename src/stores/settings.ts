@@ -6,6 +6,9 @@ import { useUi } from "./ui";
 
 /** Shown until the backend answers; the backend owns the real defaults and validation. */
 export const DEFAULT_SETTINGS: Settings = {
+  startup: "restore",
+  alwaysOnTop: false,
+  confirmCloseUnsaved: true,
   theme: "dark",
   accent: "#3b82f6",
   reduceMotion: false,

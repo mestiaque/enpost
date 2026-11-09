@@ -6,6 +6,7 @@ export interface Toast {
   kind: "info" | "success" | "error";
   title: string;
   detail?: string;
+  action?: { label: string; run: () => void };
 }
 
 export interface ConfirmRequest {

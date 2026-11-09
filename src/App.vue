@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { TooltipProvider } from "reka-ui";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
+import UpdateDialog from "@/components/update/UpdateDialog.vue";
+import { scheduleUpdateCheck } from "@/stores/update";
 import CommandPalette from "@/components/common/CommandPalette.vue";
 import SaveAsDialog from "@/components/request/SaveAsDialog.vue";
 import SettingsDialog from "@/components/settings/SettingsDialog.vue";
@@ -23,7 +25,31 @@ useShortcuts();
 onMounted(async () => {
   await settings.load();
   await useWorkspace().load().catch((e) => console.error("workspace load failed", e));
-  useTabs().open();
+  const tabs = useTabs();
+  if (settings.settings.startup !== "restore" || !tabs.restoreSession()) tabs.open();
+  // Remember open tabs (debounced), for "Reopen the tabs from last time".
+  let t: number | undefined;
+  watch(
+    () => tabs.tabs.map((x) => [x.id, x.name, x.dirty, x.savedId, x.draft]),
+    () => {
+      window.clearTimeout(t);
+      t = window.setTimeout(() => tabs.saveSession(), 500);
+    },
+    { deep: true },
+  );
+  watch(() => tabs.activeId, () => tabs.saveSession());
+  // Always on top (Settings → General).
+  watch(
+    () => settings.settings.alwaysOnTop,
+    (on) => inTauri() && void getCurrentWindow().setAlwaysOnTop(on).catch(() => {}),
+    { immediate: true },
+  );
+  // Quiet update check about once a day.
+  let cancelCheck = scheduleUpdateCheck(settings.settings.checkUpdates);
+  watch(() => settings.settings.checkUpdates, (on) => {
+    cancelCheck();
+    cancelCheck = scheduleUpdateCheck(on);
+  });
   // The window starts hidden so it never flashes unstyled; show it once the theme is applied.
   if (inTauri()) await getCurrentWindow().show();
 });
@@ -42,6 +68,7 @@ window.addEventListener("contextmenu", (e) => {
     <SettingsDialog />
     <CommandPalette />
     <SaveAsDialog />
+    <UpdateDialog />
     <ConfirmHost />
     <PromptHost />
     <Toaster />

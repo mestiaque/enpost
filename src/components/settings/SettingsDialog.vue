@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Check } from "lucide-vue-next";
-import { computed, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import Button from "@/components/ui/Button.vue";
 import Dialog from "@/components/ui/Dialog.vue";
 import Kbd from "@/components/ui/Kbd.vue";
@@ -9,7 +9,10 @@ import Switch from "@/components/ui/Switch.vue";
 import AboutSection from "./AboutSection.vue";
 import SettingRow from "./SettingRow.vue";
 import { SHORTCUTS } from "@/composables/useShortcuts";
+import { api, inTauri } from "@/services/ipc";
+import { useHistory } from "@/stores/history";
 import { useSettings } from "@/stores/settings";
+import { useUpdate } from "@/stores/update";
 import { useUi } from "@/stores/ui";
 import type { Settings, Theme } from "@/types";
 
@@ -23,6 +26,7 @@ const SECTIONS = [
   ["appearance", "Appearance"],
   ["editor", "Editor"],
   ["requests", "Requests"],
+  ["privacy", "Privacy"],
   ["shortcuts", "Shortcuts"],
   ["about", "About"],
 ] as const;
@@ -30,6 +34,28 @@ const SECTIONS = [
 type BoolKey = { [K in keyof Settings]: Settings[K] extends boolean ? K : never }[keyof Settings];
 const bool = (k: BoolKey) => computed({ get: () => s.value[k], set: (v: boolean) => void store.update({ [k]: v }) });
 const autosave = bool("autosave");
+const alwaysOnTop = bool("alwaysOnTop");
+const confirmClose = bool("confirmCloseUnsaved");
+const sidebarShown = computed({ get: () => !s.value.sidebarCollapsed, set: (v: boolean) => void store.update({ sidebarCollapsed: !v }) });
+const STARTUP = [
+  { value: "restore", label: "Reopen the tabs from last time" },
+  { value: "blank", label: "A new empty request" },
+] as const;
+const upd = useUpdate();
+const updateStatus = ref("");
+async function checkNow() {
+  updateStatus.value = "Checking…";
+  updateStatus.value = await upd.check(true);
+}
+const appVersion = ref("");
+onMounted(async () => {
+  if (inTauri()) appVersion.value = (await api.appInfo().catch(() => null))?.version ?? "";
+});
+async function clearHistory() {
+  if (!(await ui.confirm({ title: "Clear request history?", message: "All sent requests and their stored responses are deleted.", confirmLabel: "Clear", danger: true }))) return;
+  await useHistory().clear();
+  ui.toast({ kind: "success", title: "History cleared" });
+}
 const checkUpdates = bool("checkUpdates");
 const reduceMotion = bool("reduceMotion");
 const wordWrap = bool("editorWordWrap");
@@ -111,12 +137,30 @@ async function resetAll() {
       </nav>
       <div class="min-w-0 flex-1 overflow-y-auto px-6 py-2">
         <template v-if="ui.settingsSection === 'general'">
-          <SettingRow label="Save changes automatically" hint="Applies to saved requests (Phase 3)"><Switch v-model="autosave" label="Autosave" /></SettingRow>
-          <SettingRow label="Keep request history for" hint="Older requests and their stored responses are deleted; secrets are never saved">
+          <SettingRow label="On startup" hint="What ENPost shows when it opens">
+            <Select :model-value="s.startup" :options="STARTUP" label="On startup" @update:model-value="(v) => store.update({ startup: v })" />
+          </SettingRow>
+          <SettingRow label="Show sidebar" hint="Ctrl+B"><Switch v-model="sidebarShown" label="Show sidebar" /></SettingRow>
+          <SettingRow label="Always on top" hint="Keep ENPost above other windows"><Switch v-model="alwaysOnTop" label="Always on top" /></SettingRow>
+          <SettingRow label="Save changes automatically" hint="Saved requests are written shortly after each change"><Switch v-model="autosave" label="Autosave" /></SettingRow>
+          <SettingRow label="Confirm before closing a tab with unsaved changes"><Switch v-model="confirmClose" label="Confirm before closing" /></SettingRow>
+          <SettingRow label="Check for updates automatically" hint="Looks for a new ENPost release on GitHub once a day"><Switch v-model="checkUpdates" label="Check for updates" /></SettingRow>
+          <SettingRow label="Updates" :hint="updateStatus || `You have version ${appVersion}`">
+            <Button size="sm" :disabled="upd.checking" @click="checkNow">{{ upd.checking ? "Checking…" : "Check now" }}</Button>
+          </SettingRow>
+          <SettingRow label="Reset all settings" hint="Collections, requests and history are kept"><Button size="sm" variant="danger" @click="resetAll">Reset</Button></SettingRow>
+        </template>
+
+        <template v-else-if="ui.settingsSection === 'privacy'">
+          <SettingRow label="Keep request history for" hint="Older requests and their stored responses are deleted">
             <Select :model-value="s.historyRetentionDays" :options="RETENTION" label="History retention" @update:model-value="(v: number) => store.update({ historyRetentionDays: v })" />
           </SettingRow>
-          <SettingRow label="Check for updates automatically" hint="Once a day, from GitHub releases (update installer: Phase 6)"><Switch v-model="checkUpdates" label="Check for updates" /></SettingRow>
-          <SettingRow label="Reset all settings" hint="Requests and data are kept"><Button size="sm" variant="danger" @click="resetAll">Reset</Button></SettingRow>
+          <SettingRow label="Request history" hint="Sent requests and their stored responses"><Button size="sm" @click="clearHistory">Clear history</Button></SettingRow>
+          <div class="mt-4 space-y-2 rounded-lg bg-raised p-3 text-[12px] leading-relaxed text-muted">
+            <p>ENPost works offline. There is no account, no telemetry and no cloud: collections, history and settings stay in a local database on this computer.</p>
+            <p>The only connections ENPost makes on its own are the requests you send and the optional update check (General → Check for updates), which asks GitHub for the latest version number.</p>
+            <p>History never stores passwords, tokens, cookies, authorization headers or request bodies; they are removed before anything is saved, and never written to the log file.</p>
+          </div>
         </template>
 
         <template v-else-if="ui.settingsSection === 'appearance'">

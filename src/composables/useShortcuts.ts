@@ -40,7 +40,7 @@ export function useShortcuts() {
     else if (k === ",") ui.openSettings();
     else if (ui.dialog || ui.confirmReq) handled = false;
     else if (k === "t") tabs.open();
-    else if (k === "w") tabs.activeId && tabs.close(tabs.activeId);
+    else if (k === "w") tabs.activeId && tabs.requestClose(tabs.activeId);
     else if (k === "tab") tabs.cycle(e.shiftKey ? -1 : 1);
     else if (k === "b") void settings.update({ sidebarCollapsed: !settings.settings.sidebarCollapsed });
     else if (k === "enter") tabs.activeId && void tabs.send(tabs.activeId);

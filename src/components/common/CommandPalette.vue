@@ -29,12 +29,12 @@ const commands = computed<Entry[]>(() => [
   { id: "new", label: "New request tab", hint: "Ctrl+T", run: () => tabs.open() },
   ...(tabs.activeId
     ? [
-        { id: "close", label: "Close tab", hint: "Ctrl+W", run: () => tabs.activeId && tabs.close(tabs.activeId) },
+        { id: "close", label: "Close tab", hint: "Ctrl+W", run: () => tabs.activeId && tabs.requestClose(tabs.activeId) },
         { id: "dup", label: "Duplicate tab", run: () => tabs.activeId && tabs.duplicate(tabs.activeId) },
         { id: "save", label: tabs.active?.savedId ? "Save request" : "Save request as…", hint: "Ctrl+S", run: () => tabs.activeId && void tabs.save(tabs.activeId) },
       ]
     : []),
-  ...(tabs.tabs.length > 1 ? [{ id: "others", label: "Close other tabs", run: () => tabs.activeId && tabs.closeOthers(tabs.activeId) }] : []),
+  ...(tabs.tabs.length > 1 ? [{ id: "others", label: "Close other tabs", run: () => tabs.activeId && tabs.requestCloseOthers(tabs.activeId) }] : []),
   { id: "goto", label: "Go to an open tab…", hint: "Ctrl+P", run: () => setTimeout(() => ui.openPalette("tabs")) },
   { id: "sidebar", label: settings.settings.sidebarCollapsed ? "Show sidebar" : "Hide sidebar", hint: "Ctrl+B", run: () => void settings.update({ sidebarCollapsed: !settings.settings.sidebarCollapsed }) },
   { id: "t-dark", label: "Theme: Dark", run: () => void settings.update({ theme: "dark" }) },

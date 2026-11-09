@@ -4,6 +4,8 @@ export type { AppInfo } from "./bindings/AppInfo";
 export type { Settings } from "./bindings/Settings";
 export type { SettingsPatch } from "./bindings/SettingsPatch";
 export type { Theme } from "./bindings/Theme";
+export type { Startup } from "./bindings/Startup";
+export type { UpdateInfo } from "./bindings/UpdateInfo";
 export type { BodyKind } from "./bindings/BodyKind";
 export type { FieldKind } from "./bindings/FieldKind";
 export type { FormField } from "./bindings/FormField";

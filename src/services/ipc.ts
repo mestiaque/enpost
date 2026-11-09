@@ -7,6 +7,7 @@ import { invoke } from "@tauri-apps/api/core";
 import type {
   AppErrorPayload,
   AppInfo,
+  UpdateInfo,
   HistoryEntry,
   HttpRequest,
   HttpResponse,
@@ -24,6 +25,10 @@ import type {
 interface Commands {
   app_info: { args: Record<string, never>; result: AppInfo };
   open_app_folder: { args: { which: "data" | "logs" }; result: null };
+  check_update: { args: Record<string, never>; result: UpdateInfo | null };
+  install_update: { args: { info: UpdateInfo }; result: "restart" | "exiting" };
+  open_release_page: { args: Record<string, never>; result: null };
+  restart_app: { args: Record<string, never>; result: null };
   open_link: { args: { which: "website" | "source" | "issues" | "email" }; result: null };
   get_settings: { args: Record<string, never>; result: Settings };
   update_settings: { args: { patch: SettingsPatch }; result: Settings };
@@ -85,6 +90,10 @@ export async function call<K extends CommandName>(cmd: K, ...args: Commands[K]["
 
 export const api = {
   appInfo: () => call("app_info"),
+  checkUpdate: () => call("check_update"),
+  installUpdate: (info: UpdateInfo) => call("install_update", { info }),
+  openReleasePage: () => call("open_release_page"),
+  restartApp: () => call("restart_app"),
   openAppFolder: (which: "data" | "logs") => call("open_app_folder", { which }),
   openLink: (which: "website" | "source" | "issues" | "email") => call("open_link", { which }),
   getSettings: () => call("get_settings"),

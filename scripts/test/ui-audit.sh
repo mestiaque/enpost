@@ -36,7 +36,8 @@ xdotool mousemove 430 196; sleep 0.2; xdotool click 1; sleep 0.3; xdotool mousem
 # Palette, settings sections, about
 xdotool key Escape; xdotool key ctrl+k; shot 09-palette
 xdotool key Escape; sleep 0.4; xdotool key ctrl+comma; shot 10-settings-general
-for i in 2 3 4 5 6; do click 300 $((180 + (i - 1) * 34)); shot "1$i-settings-$i"; done
+for i in 2 3 4 5 6 7; do click 300 $((180 + (i - 1) * 34)); shot "1$i-settings-$i"; done
+xdotool mousemove 900 500; for n in 1 2 3 4 5 6 7 8; do xdotool click 5; done; shot 18b-about-scrolled
 xdotool key Escape; sleep 0.5
 # Sidebar context menu on empty collections area, history panel, small window
 click 24 140; shot 17-history

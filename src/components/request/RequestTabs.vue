@@ -49,7 +49,7 @@ const item = "flex cursor-default items-center rounded px-2 py-1.5 text-[13px] o
             ]"
             :title="t.draft.url || t.name"
             @mousedown="tabs.activate(t.id)"
-            @auxclick.prevent="$event.button === 1 && tabs.close(t.id)"
+            @auxclick.prevent="$event.button === 1 && tabs.requestClose(t.id)"
             @keydown.enter="tabs.activate(t.id)"
             @dragstart="onDragStart($event, i)"
             @dragover="onDragOver($event, i)"
@@ -64,7 +64,7 @@ const item = "flex cursor-default items-center rounded px-2 py-1.5 text-[13px] o
               :class="['h-4 w-4 shrink-0 items-center justify-center rounded text-faint hover:bg-line hover:text-fg', t.dirty ? 'hidden group-hover:flex' : 'flex opacity-0 group-hover:opacity-100', t.id === tabs.activeId && !t.dirty && 'opacity-100']"
               aria-label="Close tab"
               @mousedown.stop
-              @click.stop="tabs.close(t.id)"
+              @click.stop="tabs.requestClose(t.id)"
             >
               <X class="h-3 w-3" />
             </button>
@@ -74,8 +74,8 @@ const item = "flex cursor-default items-center rounded px-2 py-1.5 text-[13px] o
           <ContextMenuContent class="z-[90] min-w-[180px] rounded-lg border border-line bg-panel p-1 shadow-pop data-[state=open]:animate-fade-in">
             <ContextMenuItem :class="item" @select="tabs.duplicate(t.id)">Duplicate</ContextMenuItem>
             <ContextMenuSeparator class="my-1 h-px bg-line" />
-            <ContextMenuItem :class="item" @select="tabs.close(t.id)">Close<span class="ml-auto pl-4 text-[11px] text-faint">Ctrl+W</span></ContextMenuItem>
-            <ContextMenuItem :class="item" :disabled="tabs.tabs.length < 2" @select="tabs.closeOthers(t.id)">Close other tabs</ContextMenuItem>
+            <ContextMenuItem :class="item" @select="tabs.requestClose(t.id)">Close<span class="ml-auto pl-4 text-[11px] text-faint">Ctrl+W</span></ContextMenuItem>
+            <ContextMenuItem :class="item" :disabled="tabs.tabs.length < 2" @select="tabs.requestCloseOthers(t.id)">Close other tabs</ContextMenuItem>
           </ContextMenuContent>
         </ContextMenuPortal>
       </ContextMenuRoot>

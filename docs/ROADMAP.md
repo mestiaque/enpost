@@ -53,6 +53,10 @@ tested against a local server (Rust integration tests) and in the real app (smok
 - ⬜ Request descriptions editor (stored already, no editor yet)
 - ⬜ Reopen the tabs that were open last time
 
+**Polish (done between 3a and 3b)**
+- ✅ Settings like the sister apps: General (on startup: reopen last tabs or a blank request, show sidebar, always on top, autosave, confirm before closing unsaved tabs, update check), Privacy section, full About (build, system, Tauri/WebView, paths with Open buttons, copy diagnostics, developer, source and bug links, open-source credits)
+- ✅ UI fixes: icon buttons and Escape in dialogs, focus rings inside bordered fields, app-styled selects and checkboxes, translucent Glass work area, narrow-window response bar
+
 **Still open in Phase 3**
 - ⬜ Environments and variables at every scope, precedence, `{{var}}` highlighting, unresolved warnings
 - ⬜ Secret variables in the OS credential manager
@@ -80,5 +84,6 @@ tested against a local server (Rust integration tests) and in the real app (smok
 - ⬜ Security review, performance pass
 - ⬜ Developer utilities (JWT, JSON tools, Base64, URL, UUID, timestamps, hashes, regex, cURL generator, status reference)
 - ⬜ Backup and restore
-- ⬜ In-app updates (same mechanism as ENViewer and ENDownloader), signed release pipeline
+- ✅ In-app updates (same mechanism as ENViewer and ENDownloader): daily check, Check now, checksum-verified install (done early, with the settings polish)
+- ⬜ Signed release pipeline
 - ⬜ User guide with screenshots
