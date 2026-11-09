@@ -6,7 +6,6 @@ use tauri_plugin_opener::OpenerExt;
 use ts_rs::TS;
 
 pub const WEBSITE: &str = "https://mestiaque.com";
-pub const SOURCE: &str = "https://github.com/mestiaque/NEPost";
 pub const EMAIL: &str = "info@mestiaque.com";
 
 /// Version and environment facts for the About page, the status bar and bug reports.
@@ -29,7 +28,6 @@ pub struct AppInfo {
     #[ts(type = "number")]
     pub schema_version: i64,
     pub website: String,
-    pub source: String,
     pub email: String,
 }
 
@@ -48,7 +46,6 @@ pub async fn app_info(app: AppHandle, state: State<'_, AppState>) -> AppResult<A
         logs_dir: app.path().app_log_dir().map(|p| p.display().to_string()).unwrap_or_default(),
         schema_version: state.db.schema_version().await?,
         website: WEBSITE.into(),
-        source: SOURCE.into(),
         email: EMAIL.into(),
     })
 }
@@ -65,13 +62,11 @@ pub fn open_app_folder(app: AppHandle, state: State<'_, AppState>, which: String
     app.opener().open_path(path.display().to_string(), None::<&str>).map_err(|e| AppError::Internal(e.to_string()))
 }
 
-/// Open the developer's website, the source code or a new e-mail (fixed URLs only).
+/// Open the developer's website or a new e-mail (fixed URLs only).
 #[tauri::command]
 pub fn open_link(app: AppHandle, which: String) -> AppResult<()> {
     let url = match which.as_str() {
         "website" => WEBSITE.to_string(),
-        "source" => SOURCE.to_string(),
-        "issues" => format!("{SOURCE}/issues"),
         "email" => format!("mailto:{EMAIL}?subject=ENPost"),
         _ => return Err(AppError::Validation(format!("unknown link {which}"))),
     };

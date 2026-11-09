@@ -29,7 +29,7 @@ interface Commands {
   install_update: { args: { info: UpdateInfo }; result: "restart" | "exiting" };
   open_release_page: { args: Record<string, never>; result: null };
   restart_app: { args: Record<string, never>; result: null };
-  open_link: { args: { which: "website" | "source" | "issues" | "email" }; result: null };
+  open_link: { args: { which: "website" | "email" }; result: null };
   get_settings: { args: Record<string, never>; result: Settings };
   update_settings: { args: { patch: SettingsPatch }; result: Settings };
   reset_settings: { args: Record<string, never>; result: Settings };
@@ -95,7 +95,7 @@ export const api = {
   openReleasePage: () => call("open_release_page"),
   restartApp: () => call("restart_app"),
   openAppFolder: (which: "data" | "logs") => call("open_app_folder", { which }),
-  openLink: (which: "website" | "source" | "issues" | "email") => call("open_link", { which }),
+  openLink: (which: "website" | "email") => call("open_link", { which }),
   getSettings: () => call("get_settings"),
   updateSettings: (patch: SettingsPatch) => call("update_settings", { patch }),
   resetSettings: () => call("reset_settings"),

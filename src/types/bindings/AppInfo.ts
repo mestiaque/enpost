@@ -15,4 +15,4 @@ webviewVersion: string,
 /**
  * "linux" | "windows" | "macos"
  */
-platform: string, arch: string, dataDir: string, logsDir: string, schemaVersion: number, website: string, source: string, email: string, };
+platform: string, arch: string, dataDir: string, logsDir: string, schemaVersion: number, website: string, email: string, };
