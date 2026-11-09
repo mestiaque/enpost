@@ -5,7 +5,7 @@ name: build
 on:
   push:
     tags: ["v*"]
-    branches: [main]
+    branches: [master]
     paths-ignore: ["docs/**", "**.md"]
   pull_request:
     paths-ignore: ["docs/**", "**.md"]
