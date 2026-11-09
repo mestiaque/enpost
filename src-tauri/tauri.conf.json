@@ -1,9 +1,9 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "NEPost",
-  "mainBinaryName": "nepost",
+  "productName": "ENPost",
+  "mainBinaryName": "enpost",
   "version": "0.1.0",
-  "identifier": "com.mestiaque.nepost",
+  "identifier": "com.mestiaque.enpost",
   "build": {
     "beforeDevCommand": "pnpm dev",
     "devUrl": "http://localhost:1430",
@@ -14,7 +14,7 @@
     "windows": [
       {
         "label": "main",
-        "title": "NEPost",
+        "title": "ENPost",
         "width": 1320,
         "height": 840,
         "minWidth": 860,
@@ -36,7 +36,7 @@
     "publisher": "M. Estiaque Ahmed Khan",
     "category": "DeveloperTool",
     "shortDescription": "API development and testing",
-    "longDescription": "NEPost is an offline-first desktop app for building, sending and testing API requests.",
+    "longDescription": "ENPost is an offline-first desktop app for building, sending and testing API requests.",
     "copyright": "© 2026 M. Estiaque Ahmed Khan · MIT License",
     "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.icns", "icons/icon.ico"],
     "linux": { "deb": { "section": "devel" } },

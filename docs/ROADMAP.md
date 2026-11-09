@@ -1,4 +1,4 @@
-# NEPost roadmap
+# ENPost roadmap
 
 Each phase ends only when its tests pass and its acceptance criteria are met. ✅ = done and
 verified, ⬜ = open.
@@ -42,7 +42,7 @@ saved in SQLite and a typed IPC path tested end to end.*
 - ⬜ Secret variables in the OS credential manager
 - ⬜ Auth: Basic, Bearer, API key, OAuth 2.0; collection-level auth
 - ⬜ Cookies
-- ⬜ Import and export: Postman v2.1, OpenAPI 3, Swagger 2, cURL, Insomnia, NEPost format, JSON backup
+- ⬜ Import and export: Postman v2.1, OpenAPI 3, Swagger 2, cURL, Insomnia, ENPost format, JSON backup
 
 ## Phase 4: Testing ⬜
 

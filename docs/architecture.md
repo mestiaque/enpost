@@ -1,6 +1,6 @@
-# NEPost architecture
+# ENPost architecture
 
-NEPost is a desktop app for building, sending and testing API requests. It works offline and
+ENPost is a desktop app for building, sending and testing API requests. It works offline and
 keeps its data on the user's computer. It runs on Ubuntu and Windows, and it is the sister app
 of ENViewer, ENDownloader and ENPlayer. It looks and behaves like them: the same frameless
 window, the same Dark, Light, Glass and System themes, accent colours and component style.
@@ -56,7 +56,7 @@ toasts, settings rows) were rewritten in Vue with the same classes.
 places.
 
 **ADR-2: reka-ui primitives instead of the shadcn-vue CLI.**
-shadcn-vue is built on reka-ui and copies component code into the project. NEPost uses the
+shadcn-vue is built on reka-ui and copies component code into the project. ENPost uses the
 same approach: accessible reka-ui primitives (Dialog, Tooltip, Switch, ContextMenu) wrapped in
 `components/ui` with the sister apps' styling. It skips the shadcn theme, which would clash
 with that styling.
@@ -96,7 +96,7 @@ rejected change leaves nothing half-applied.
 
 **ADR-9: Least-privilege Tauri capabilities.**
 The main window may only use window controls (minimise, maximise, drag, close, show and
-focus) and NEPost's own commands. NEPost includes no shell, filesystem or HTTP plugin for
+focus) and ENPost's own commands. ENPost includes no shell, filesystem or HTTP plugin for
 the webview. File access (import, export, uploads) goes through specific commands that check
 paths.
 
@@ -126,8 +126,8 @@ badge. The Send button is disabled with a tooltip until Phase 2. No control pret
 
 | What | Ubuntu | Windows |
 |---|---|---|
-| Database `nepost.db` | `~/.local/share/com.mestiaque.nepost/` | `%APPDATA%\com.mestiaque.nepost\` |
-| Logs | `~/.local/share/com.mestiaque.nepost/logs/` | `%LOCALAPPDATA%\com.mestiaque.nepost\logs\` |
+| Database `enpost.db` | `~/.local/share/com.mestiaque.enpost/` | `%APPDATA%\com.mestiaque.enpost\` |
+| Logs | `~/.local/share/com.mestiaque.enpost/logs/` | `%LOCALAPPDATA%\com.mestiaque.enpost\logs\` |
 | Large response bodies (Phase 2) | `<data>/bodies/` | `<data>\bodies\` |
 | Secrets (Phase 3) | Secret Service (GNOME Keyring / KWallet) | Windows Credential Manager |
 

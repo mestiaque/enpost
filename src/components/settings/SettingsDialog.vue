@@ -7,7 +7,7 @@ import Kbd from "@/components/ui/Kbd.vue";
 import Select from "@/components/ui/Select.vue";
 import Switch from "@/components/ui/Switch.vue";
 import SettingRow from "./SettingRow.vue";
-import appIcon from "@/assets/nepost-icon.svg";
+import appIcon from "@/assets/enpost-icon.svg";
 import { SHORTCUTS } from "@/composables/useShortcuts";
 import { api, inTauri } from "@/services/ipc";
 import { useSettings } from "@/stores/settings";
@@ -70,7 +70,7 @@ async function setVerifyTls(v: boolean) {
   if (!v) {
     const ok = await ui.confirm({
       title: "Turn off certificate verification?",
-      message: "NEPost would accept any TLS certificate, including forged ones, for every request. Only do this for local development servers with self-signed certificates.",
+      message: "ENPost would accept any TLS certificate, including forged ones, for every request. Only do this for local development servers with self-signed certificates.",
       confirmLabel: "Turn off",
       danger: true,
     });
@@ -186,7 +186,7 @@ onMounted(async () => {
             <div class="flex items-center gap-3.5 pb-2">
               <img :src="appIcon" alt="" class="h-16 w-16" draggable="false" />
               <div>
-                <div class="text-lg font-semibold">NEPost {{ info?.version }}</div>
+                <div class="text-lg font-semibold">ENPost {{ info?.version }}</div>
                 <div class="text-muted">API development and testing, offline and local-first.</div>
               </div>
             </div>

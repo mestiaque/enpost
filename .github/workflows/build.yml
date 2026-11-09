@@ -1,4 +1,4 @@
-# Tests NEPost on Ubuntu and Windows and bundles .deb, AppImage and the Windows installer.
+# Tests ENPost on Ubuntu and Windows and bundles .deb, AppImage and the Windows installer.
 # Pushing a tag like v0.1.0 publishes a GitHub Release with those files.
 name: build
 
@@ -71,7 +71,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         if: startsWith(github.ref, 'refs/tags/v') || github.event_name == 'workflow_dispatch'
         with:
-          name: nepost-${{ matrix.os }}
+          name: enpost-${{ matrix.os }}
           path: |
             target/release/bundle/deb/*.deb
             target/release/bundle/appimage/*.AppImage

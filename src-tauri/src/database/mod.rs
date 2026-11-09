@@ -100,7 +100,7 @@ mod tests {
     #[tokio::test]
     async fn reopening_a_file_keeps_data_and_does_not_rerun_migrations() {
         let dir = tempfile::tempdir().unwrap();
-        let path = dir.path().join("nepost.db");
+        let path = dir.path().join("enpost.db");
         {
             let db = Database::open(&path).await.unwrap();
             sqlx::query("INSERT INTO settings (key, value, updated_at) VALUES ('theme', '\"light\"', 1)").execute(&db.pool).await.unwrap();

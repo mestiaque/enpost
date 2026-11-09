@@ -5,7 +5,7 @@ import { computed } from "vue";
 import IconButton from "@/components/ui/IconButton.vue";
 import Kbd from "@/components/ui/Kbd.vue";
 import WindowControls from "@/components/ui/WindowControls.vue";
-import appIcon from "@/assets/nepost-icon.svg";
+import appIcon from "@/assets/enpost-icon.svg";
 import { inTauri } from "@/services/ipc";
 import { useSettings } from "@/stores/settings";
 import { useUi } from "@/stores/ui";
@@ -31,7 +31,7 @@ function onMouseDown(e: MouseEvent) {
 <template>
   <header class="flex h-11 shrink-0 items-center gap-2 border-b border-line bg-panel pl-3 pr-2.5" @mousedown="onMouseDown">
     <img :src="appIcon" alt="" class="h-[22px] w-[22px]" draggable="false" />
-    <span class="text-[14px] font-semibold tracking-tight">NEPost</span>
+    <span class="text-[14px] font-semibold tracking-tight">ENPost</span>
     <IconButton class="ml-2" label="Toggle sidebar" shortcut="Ctrl+B" @click="settings.update({ sidebarCollapsed: !settings.settings.sidebarCollapsed })">
       <PanelLeft class="h-4 w-4" />
     </IconButton>

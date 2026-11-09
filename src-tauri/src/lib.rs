@@ -1,4 +1,4 @@
-//! NEPost backend. Layers (see docs/architecture.md):
+//! ENPost backend. Layers (see docs/architecture.md):
 //! commands (IPC) → modules (services) → database (repositories), with core (errors, state)
 //! and security (redaction, later secrets) shared by all.
 
@@ -35,10 +35,10 @@ pub fn run() {
         )
         .setup(|app| {
             let data_dir = app.path().app_data_dir()?;
-            let db = tauri::async_runtime::block_on(Database::open(&data_dir.join("nepost.db"))).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
+            let db = tauri::async_runtime::block_on(Database::open(&data_dir.join("enpost.db"))).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
             let settings = tauri::async_runtime::block_on(SettingsService::load(db.clone())).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
             app.manage(AppState { db, settings, data_dir });
-            log::info!("NEPost {} started", app.package_info().version);
+            log::info!("ENPost {} started", app.package_info().version);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -49,7 +49,7 @@ pub fn run() {
         ])
         .run(tauri::generate_context!());
     if let Err(e) = result {
-        eprintln!("NEPost could not start: {e}");
+        eprintln!("ENPost could not start: {e}");
         std::process::exit(1);
     }
 }

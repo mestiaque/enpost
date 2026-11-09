@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Least privilege for the main window: window controls only. NEPost's own commands are allowed by default; no shell, filesystem or HTTP plugin is exposed to the frontend.",
+  "description": "Least privilege for the main window: window controls only. ENPost's own commands are allowed by default; no shell, filesystem or HTTP plugin is exposed to the frontend.",
   "windows": ["main"],
   "permissions": [
     "core:default",

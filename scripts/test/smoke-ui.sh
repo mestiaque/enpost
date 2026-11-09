@@ -7,8 +7,8 @@ OUT="${1:-/src/target/smoke}"
 rm -rf "$OUT" /tmp/nphome && mkdir -p "$OUT"
 export HOME=/tmp/nphome XDG_RUNTIME_DIR=/tmp/nphome/run XDG_DATA_HOME=/tmp/nphome/.local/share XDG_CONFIG_HOME=/tmp/nphome/.config
 mkdir -p "$XDG_RUNTIME_DIR" && chmod 700 "$XDG_RUNTIME_DIR"
-DB="$XDG_DATA_HOME/com.mestiaque.nepost/nepost.db"
-BIN=/src/target/debug/nepost
+DB="$XDG_DATA_HOME/com.mestiaque.enpost/enpost.db"
+BIN=/src/target/debug/enpost
 trap 'pkill -f "$BIN"; pkill -f "Xvfb :96"' EXIT
 Xvfb :96 -screen 0 1320x840x24 >/dev/null 2>&1 &
 export DISPLAY=:96
@@ -16,7 +16,7 @@ sleep 1
 q() { python3 -c 'import sqlite3,sys; [print(*r) for r in sqlite3.connect(sys.argv[1]).execute(sys.argv[2])]' "$DB" "$1"; }
 start() {
   "$BIN" >>"$OUT/app.log" 2>&1 &
-  for _ in $(seq 1 40); do WID=$(xdotool search --onlyvisible --name NEPost 2>/dev/null | head -1); [ -n "$WID" ] && break; sleep 0.5; done
+  for _ in $(seq 1 40); do WID=$(xdotool search --onlyvisible --name ENPost 2>/dev/null | head -1); [ -n "$WID" ] && break; sleep 0.5; done
   [ -n "$WID" ] || { echo "window did not appear"; tail -20 "$OUT/app.log"; exit 1; }
   sleep 2
   eval "$(xdotool getwindowgeometry --shell "$WID")"

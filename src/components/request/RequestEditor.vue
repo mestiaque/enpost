@@ -91,7 +91,7 @@ const rawBody = computed(() => ["json", "text", "xml"].includes(d.value.bodyType
           v-else-if="rawBody"
           :value="d.body"
           class="min-h-[140px] flex-1 resize-none rounded-md border border-line bg-panel p-3 font-mono text-[length:var(--editor-font-size)] text-fg outline-none placeholder:text-faint focus:border-accent"
-          :placeholder="d.bodyType === 'json' ? '{ &quot;name&quot;: &quot;NEPost&quot; }' : ''"
+          :placeholder="d.bodyType === 'json' ? '{ &quot;name&quot;: &quot;ENPost&quot; }' : ''"
           spellcheck="false"
           aria-label="Request body"
           @input="tabs.edit(tab.id, (x) => (x.body = ($event.target as HTMLTextAreaElement).value))"

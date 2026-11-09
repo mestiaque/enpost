@@ -1,10 +1,10 @@
-# NEPost — Master Software Development Specification
+# ENPost — Master Software Development Specification
 
 ## 1. Your Role
 
 Act as a Senior Desktop Application Architect, Senior Rust Engineer, Vue.js Engineer, UI/UX Designer, Security Engineer, and QA Engineer.
 
-Your task is to design and develop a professional, production-grade, cross-platform API Development and Testing Desktop Application named **NEPost**.
+Your task is to design and develop a professional, production-grade, cross-platform API Development and Testing Desktop Application named **ENPost**.
 
 This is an advanced API development platform inspired by Postman, Insomnia, and Bruno, but it must have its own identity, architecture, and custom UI.
 

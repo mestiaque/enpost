@@ -4,7 +4,7 @@ import { Copy, Minus, Square, X } from "lucide-vue-next";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { inTauri } from "@/services/ipc";
 
-/** Minimise / maximise / close for NEPost's frameless window (same as the sister apps). */
+/** Minimise / maximise / close for ENPost's frameless window (same as the sister apps). */
 const maximized = ref(false);
 let unlisten: (() => void) | null = null;
 const win = () => getCurrentWindow();

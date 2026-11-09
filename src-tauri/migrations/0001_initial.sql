@@ -1,4 +1,4 @@
--- NEPost initial schema (Phase 1).
+-- ENPost initial schema (Phase 1).
 --
 -- The whole data model is created up front so later phases only add behaviour, not
 -- table rewrites. Conventions:

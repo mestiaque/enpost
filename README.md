@@ -1,4 +1,4 @@
-# NEPost
+# ENPost
 
 An offline-first desktop app for building, sending and testing API requests, for **Ubuntu** and
 **Windows**. Built with Tauri 2, Rust and Vue 3. Sister app of ENViewer, ENDownloader and
@@ -24,7 +24,7 @@ ENDownloader):
 
 ```bash
 docker build -t endl-build scripts/docker            # once
-scripts/docker/run.sh "pnpm install && pnpm tauri build --debug --no-bundle"   # → target/debug/nepost
+scripts/docker/run.sh "pnpm install && pnpm tauri build --debug --no-bundle"   # → target/debug/enpost
 ```
 
 ## Tests

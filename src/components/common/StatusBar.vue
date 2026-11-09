@@ -29,6 +29,6 @@ onMounted(async () => {
     </Tooltip>
     <span>{{ tabs.tabs.length }} {{ tabs.tabs.length === 1 ? "tab" : "tabs" }}</span>
     <span class="flex-1" />
-    <span v-if="info">NEPost {{ info.version }} · {{ info.platform }}</span>
+    <span v-if="info">ENPost {{ info.version }} · {{ info.platform }}</span>
   </footer>
 </template>
