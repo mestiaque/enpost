@@ -33,7 +33,11 @@ maxRedirects: number,
 /**
  * Turning this off needs an explicit confirmation in the UI.
  */
-verifyTls: boolean, autosave: boolean, 
+verifyTls: boolean, 
+/**
+ * `http://host:port` or `https://…`; empty = the system proxy settings (env variables).
+ */
+proxyUrl: string, autosave: boolean, 
 /**
  * 0 = keep forever; otherwise 1–3650 days.
  */

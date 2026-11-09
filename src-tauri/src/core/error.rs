@@ -17,6 +17,21 @@ pub enum AppError {
     Io(String),
     #[error("{0}")]
     Internal(String),
+    // Sending requests (Phase 2). Each kind gets its own message in the response panel.
+    #[error("Invalid request: {0}")]
+    InvalidRequest(String),
+    #[error("Could not connect: {0}")]
+    Connect(String),
+    #[error("The request timed out after {0} ms")]
+    Timeout(u64),
+    #[error("TLS/certificate problem: {0}")]
+    Tls(String),
+    #[error("Too many redirects: {0}")]
+    Redirect(String),
+    #[error("Network error: {0}")]
+    Network(String),
+    #[error("Request cancelled")]
+    Cancelled,
 }
 
 pub type AppResult<T> = Result<T, AppError>;
@@ -26,7 +41,8 @@ pub type AppResult<T> = Result<T, AppError>;
 #[serde(rename_all = "camelCase")]
 #[ts(export, rename = "AppErrorPayload")]
 pub struct ErrorPayload {
-    /// "database" | "validation" | "notFound" | "io" | "internal"
+    /// "database" | "validation" | "notFound" | "io" | "internal" | "invalidRequest" | "connect"
+    /// | "timeout" | "tls" | "redirect" | "network" | "cancelled"
     pub kind: String,
     pub message: String,
 }
@@ -39,6 +55,13 @@ impl AppError {
             AppError::NotFound(_) => "notFound",
             AppError::Io(_) => "io",
             AppError::Internal(_) => "internal",
+            AppError::InvalidRequest(_) => "invalidRequest",
+            AppError::Connect(_) => "connect",
+            AppError::Timeout(_) => "timeout",
+            AppError::Tls(_) => "tls",
+            AppError::Redirect(_) => "redirect",
+            AppError::Network(_) => "network",
+            AppError::Cancelled => "cancelled",
         }
     }
 

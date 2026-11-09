@@ -1,7 +1,7 @@
 {
   "$schema": "../gen/schemas/desktop-schema.json",
   "identifier": "default",
-  "description": "Least privilege for the main window: window controls only. ENPost's own commands are allowed by default; no shell, filesystem or HTTP plugin is exposed to the frontend.",
+  "description": "Least privilege for the main window: window controls and the native open/save dialogs (the frontend only gets the chosen path). ENPost's own commands are allowed by default; no shell, filesystem or HTTP plugin is exposed to the frontend.",
   "windows": ["main"],
   "permissions": [
     "core:default",
@@ -11,6 +11,8 @@
     "core:window:allow-close",
     "core:window:allow-start-dragging",
     "core:window:allow-show",
-    "core:window:allow-set-focus"
+    "core:window:allow-set-focus",
+    "dialog:allow-open",
+    "dialog:allow-save"
   ]
 }

@@ -4,13 +4,18 @@
  * The frontend never performs API requests itself: those run in Rust (Phase 2).
  */
 import { invoke } from "@tauri-apps/api/core";
-import type { AppErrorPayload, AppInfo, Settings, SettingsPatch } from "@/types";
+import type { AppErrorPayload, AppInfo, HistoryEntry, HttpRequest, HttpResponse, Settings, SettingsPatch } from "@/types";
 
 interface Commands {
   app_info: { args: Record<string, never>; result: AppInfo };
   get_settings: { args: Record<string, never>; result: Settings };
   update_settings: { args: { patch: SettingsPatch }; result: Settings };
   reset_settings: { args: Record<string, never>; result: Settings };
+  send_request: { args: { request: HttpRequest }; result: HttpResponse };
+  cancel_request: { args: { requestId: string }; result: boolean };
+  save_response_body: { args: { historyId: string; destination: string }; result: null };
+  list_history: { args: { limit: number | null }; result: HistoryEntry[] };
+  clear_history: { args: Record<string, never>; result: null };
 }
 
 export type CommandName = keyof Commands;
@@ -51,4 +56,9 @@ export const api = {
   getSettings: () => call("get_settings"),
   updateSettings: (patch: SettingsPatch) => call("update_settings", { patch }),
   resetSettings: () => call("reset_settings"),
+  sendRequest: (request: HttpRequest) => call("send_request", { request }),
+  cancelRequest: (requestId: string) => call("cancel_request", { requestId }),
+  saveResponseBody: (historyId: string, destination: string) => call("save_response_body", { historyId, destination }),
+  listHistory: (limit: number | null = null) => call("list_history", { limit }),
+  clearHistory: () => call("clear_history"),
 };

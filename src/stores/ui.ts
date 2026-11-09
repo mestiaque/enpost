@@ -17,6 +17,7 @@ export interface ConfirmRequest {
 }
 
 export type DialogKind = null | "settings" | "palette";
+export type SidebarPanel = "collections" | "history";
 
 let toastId = 0;
 
@@ -27,6 +28,7 @@ export const useUi = defineStore("ui", () => {
   const paletteMode = ref<"commands" | "tabs">("commands");
   const settingsSection = ref("general");
   const confirmReq = ref<ConfirmRequest | null>(null);
+  const sidebarPanel = ref<SidebarPanel>("collections");
 
   function toast(t: Omit<Toast, "id">, ttl = 4000) {
     const id = ++toastId;
@@ -54,5 +56,5 @@ export const useUi = defineStore("ui", () => {
     confirmReq.value?.resolve(ok);
     confirmReq.value = null;
   }
-  return { toasts, dialog, paletteMode, settingsSection, confirmReq, toast, dismiss, openSettings, openPalette, confirm, answerConfirm };
+  return { sidebarPanel, toasts, dialog, paletteMode, settingsSection, confirmReq, toast, dismiss, openSettings, openPalette, confirm, answerConfirm };
 });

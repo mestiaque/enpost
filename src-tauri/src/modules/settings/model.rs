@@ -46,6 +46,8 @@ pub struct Settings {
     pub max_redirects: u32,
     /// Turning this off needs an explicit confirmation in the UI.
     pub verify_tls: bool,
+    /// `http://host:port` or `https://…`; empty = the system proxy settings (env variables).
+    pub proxy_url: String,
     // Data
     pub autosave: bool,
     /// 0 = keep forever; otherwise 1–3650 days.
@@ -69,6 +71,7 @@ impl Default for Settings {
             follow_redirects: true,
             max_redirects: 10,
             verify_tls: true,
+            proxy_url: String::new(),
             autosave: true,
             history_retention_days: 30,
             check_updates: true,
@@ -94,6 +97,7 @@ pub struct SettingsPatch {
     pub follow_redirects: Option<bool>,
     pub max_redirects: Option<u32>,
     pub verify_tls: Option<bool>,
+    pub proxy_url: Option<String>,
     pub autosave: Option<bool>,
     pub history_retention_days: Option<u32>,
     pub check_updates: Option<bool>,
@@ -146,6 +150,14 @@ impl Settings {
         if self.max_redirects > 50 {
             return bad("At most 50 redirects");
         }
+        let proxy = self.proxy_url.trim();
+        if !proxy.is_empty() && !((proxy.starts_with("http://") || proxy.starts_with("https://")) && proxy.len() > 8 && !proxy.contains(char::is_whitespace)) {
+            return bad("Proxy must look like http://host:port");
+        }
+        if proxy.contains('@') {
+            // Credentials would sit in SQLite as plain text; they need the credential store (Phase 3).
+            return bad("A proxy with a user name and password is not supported yet");
+        }
         if self.history_retention_days > 3650 {
             return bad("History can be kept for at most 3650 days");
         }
@@ -160,7 +172,7 @@ impl Settings {
         }
         set!(
             theme, accent, reduce_motion, editor_font_size, editor_font_family, editor_word_wrap, sidebar_collapsed, sidebar_width, editor_split,
-            request_timeout_ms, follow_redirects, max_redirects, verify_tls, autosave, history_retention_days, check_updates
+            request_timeout_ms, follow_redirects, max_redirects, verify_tls, proxy_url, autosave, history_retention_days, check_updates
         );
         s
     }
@@ -223,5 +235,8 @@ mod tests {
         assert!(s.patched(&SettingsPatch { request_timeout_ms: Some(500), ..Default::default() }).validate().is_err());
         assert!(s.patched(&SettingsPatch { request_timeout_ms: Some(0), ..Default::default() }).validate().is_ok());
         assert!(s.patched(&SettingsPatch { editor_font_family: Some("x;}body{".into()), ..Default::default() }).validate().is_err());
+        assert!(s.patched(&SettingsPatch { proxy_url: Some("http://127.0.0.1:8080".into()), ..Default::default() }).validate().is_ok());
+        assert!(s.patched(&SettingsPatch { proxy_url: Some("socks://x".into()), ..Default::default() }).validate().is_err());
+        assert!(s.patched(&SettingsPatch { proxy_url: Some("http://user:pw@proxy:3128".into()), ..Default::default() }).validate().is_err());
     }
 }

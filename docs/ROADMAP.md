@@ -20,19 +20,25 @@ saved in SQLite and a typed IPC path tested end to end.*
 - ✅ Settings service: per-key storage, validation, atomic updates, reset
 - ✅ Typed IPC: ts-rs bindings, `call()` command map, `{ kind, message }` errors
 - ✅ Security: redaction of headers and URLs, least-privilege capabilities, strict CSP
-- ✅ Tests: Rust (15), frontend (13), headless smoke test of the real app
+- ✅ Tests: Rust (15), frontend (13), headless smoke test of the real app (Ubuntu and Windows CI green)
 - ✅ Build configuration for Ubuntu (.deb, AppImage) and Windows (NSIS) in GitHub Actions
 
-## Phase 2: HTTP engine ⬜
+## Phase 2: HTTP engine ✅
 
-- ⬜ `modules/http`: reqwest client, request DTO to execution, response DTO
-- ⬜ Request IDs, cancellation, progress events, timings (DNS, connect, TLS, first byte)
-- ⬜ Timeout, redirects, proxy, TLS verification and custom CA, client certificates
-- ⬜ Bodies: JSON, text, XML, form data, URL encoded, binary, file upload
-- ⬜ Response viewer: pretty, raw, preview, JSON tree, image preview, headers, cookies, search, copy, save
-- ⬜ Large responses streamed to disk with a preview
-- ⬜ CodeMirror 6 editors (body, response)
-- ⬜ Request history (redacted) with retention
+*Acceptance: requests built in the UI run in Rust and their responses show in the viewer,
+tested against a local server (Rust integration tests) and in the real app (smoke test).*
+
+- ✅ `modules/http`: reqwest client, typed `HttpRequest` → `HttpResponse` DTOs (ts-rs bindings)
+- ✅ Request ids, cancellation at any stage, progress events (`http-progress`), timings (waiting and download)
+- ✅ Timeout, redirects (follow / limit / off), TLS verification (turning it off needs confirmation), proxy setting
+- ✅ Bodies: JSON, text, XML, URL encoded, form data with file upload, binary file
+- ✅ Response viewer: status, time, size, Pretty (CodeMirror), Raw, Preview (HTML without scripts, images), JSON tree (virtualised, copy path or value), headers, cookies, search (Ctrl+F), copy, save to a file
+- ✅ Large responses stream to disk; the viewer gets the first 2 MB and says so
+- ✅ CodeMirror 6 for the request body and the response
+- ✅ Request history: redacted (no auth headers, tokens, cookies or bodies), retention setting, reopen in a tab, clear
+- ✅ Typed errors in the UI: timeout, connect, TLS, redirect, invalid request, network
+- ✅ Tests: Rust 40 (engine against a local axum server), frontend 24, smoke test sends a real request
+- ⬜ Moved on: custom CA certificates and client certificates (Phase 3, with the credential store); a separate DNS/connect/TLS breakdown (reqwest reports only time to headers and download)
 
 ## Phase 3: Workspace ⬜
 
@@ -41,6 +47,7 @@ saved in SQLite and a typed IPC path tested end to end.*
 - ⬜ Environments and variables at every scope, precedence, `{{var}}` highlighting, unresolved warnings
 - ⬜ Secret variables in the OS credential manager
 - ⬜ Auth: Basic, Bearer, API key, OAuth 2.0; collection-level auth
+- ⬜ Custom CA certificates and client certificates (secrets in the credential store)
 - ⬜ Cookies
 - ⬜ Import and export: Postman v2.1, OpenAPI 3, Swagger 2, cURL, Insomnia, ENPost format, JSON backup
 

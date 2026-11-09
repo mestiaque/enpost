@@ -4,8 +4,10 @@ An offline-first desktop app for building, sending and testing API requests, for
 **Windows**. Built with Tauri 2, Rust and Vue 3. Sister app of ENViewer, ENDownloader and
 ENPlayer, with the same look and themes.
 
-**Status: Phase 1 (foundation) is done.** The desktop shell, themes, settings, request tabs,
-the request editor and the local database work. Sending requests arrives in Phase 2. See
+**Status: Phase 2 (HTTP engine) is done.** ENPost sends real HTTP requests from its Rust
+engine (all methods, every body type, file uploads, timeout, redirects, proxy, cancel) and
+shows the response: pretty, raw, preview, JSON tree, headers, cookies, save. Sent requests are
+kept in a redacted history. Collections and environments come in Phase 3. See
 [docs/ROADMAP.md](docs/ROADMAP.md) for progress and [docs/architecture.md](docs/architecture.md)
 for how it is built.
 

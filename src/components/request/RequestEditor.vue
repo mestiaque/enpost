@@ -1,17 +1,29 @@
 <script setup lang="ts">
-import { Send } from "lucide-vue-next";
+import { open as openFile } from "@tauri-apps/plugin-dialog";
+import { FileUp, Send, X } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import Button from "@/components/ui/Button.vue";
+import CodeEditor from "@/components/editor/CodeEditor.vue";
 import EmptyState from "@/components/ui/EmptyState.vue";
+import Spinner from "@/components/ui/Spinner.vue";
+import FormDataEditor from "./FormDataEditor.vue";
 import Segmented from "@/components/ui/Segmented.vue";
 import Tooltip from "@/components/ui/Tooltip.vue";
 import KeyValueEditor from "./KeyValueEditor.vue";
 import { METHOD_COLOR } from "./MethodBadge.vue";
+import { useSettings } from "@/stores/settings";
 import { useTabs } from "@/stores/tabs";
 import { BODY_TYPES, HTTP_METHODS, type BodyType, type HttpMethod, type RequestTab } from "@/types";
 
 const props = defineProps<{ tab: RequestTab }>();
 const tabs = useTabs();
+const settings = useSettings();
+const sending = computed(() => props.tab.exec.state === "sending");
+const noBodyMethod = computed(() => d.value.method === "GET" || d.value.method === "HEAD");
+async function pickBinary() {
+  const path = await openFile({ title: "Choose the file to send", multiple: false, directory: false });
+  if (typeof path === "string") tabs.edit(props.tab.id, (x) => (x.binaryPath = path));
+}
 const d = computed(() => props.tab.draft);
 
 type Section = "params" | "headers" | "body" | "auth" | "scripts";
@@ -24,6 +36,7 @@ const SECTIONS: { id: Section; label: string; phase?: number }[] = [
   { id: "scripts", label: "Scripts", phase: 4 },
 ];
 const count = (id: Section) => (id === "params" ? d.value.params.filter((p) => p.enabled && p.key).length : id === "headers" ? d.value.headers.filter((h) => h.enabled && h.key).length : 0);
+const LANG = { json: "json", xml: "xml", text: "text" } as const;
 
 const BODY_LABEL: Record<BodyType, string> = { none: "None", json: "JSON", text: "Text", xml: "XML", "form-data": "Form data", urlencoded: "URL encoded", binary: "Binary" };
 const bodyOptions = BODY_TYPES.map((v) => ({ value: v, label: BODY_LABEL[v] }));
@@ -51,10 +64,12 @@ const rawBody = computed(() => ["json", "text", "xml"].includes(d.value.bodyType
           autocomplete="off"
           aria-label="Request URL"
           @input="tabs.setUrl(tab.id, ($event.target as HTMLInputElement).value)"
+          @keydown.enter.exact="tabs.send(tab.id)"
         />
       </div>
-      <Tooltip label="Sending requests arrives in Phase 2 (the Rust HTTP engine)" shortcut="Ctrl+Enter">
-        <span><Button variant="primary" class="h-9 px-4" disabled><Send class="h-3.5 w-3.5" />Send</Button></span>
+      <Button v-if="sending" class="h-9 w-[92px]" @click="tabs.cancel(tab.id)"><Spinner class="h-3.5 w-3.5" />Cancel</Button>
+      <Tooltip v-else label="Send" shortcut="Ctrl+Enter">
+        <Button variant="primary" class="h-9 w-[92px]" :disabled="!d.url.trim()" @click="tabs.send(tab.id)"><Send class="h-3.5 w-3.5" />Send</Button>
       </Tooltip>
     </div>
 
@@ -86,17 +101,28 @@ const rawBody = computed(() => ["json", "text", "xml"].includes(d.value.bodyType
       />
       <div v-else-if="section === 'body'" class="flex h-full min-h-[160px] flex-col gap-3">
         <div class="overflow-x-auto"><Segmented :model-value="d.bodyType" :options="bodyOptions" @update:model-value="(v: BodyType) => tabs.edit(tab.id, (x) => (x.bodyType = v))" /></div>
+        <p v-if="noBodyMethod && d.bodyType !== 'none'" class="text-[11px] text-warning">{{ d.method }} requests are sent without a body. Choose another method to send it.</p>
         <p v-if="d.bodyType === 'none'" class="text-xs text-muted">This request has no body.</p>
-        <textarea
-          v-else-if="rawBody"
-          :value="d.body"
-          class="min-h-[140px] flex-1 resize-none rounded-md border border-line bg-panel p-3 font-mono text-[length:var(--editor-font-size)] text-fg outline-none placeholder:text-faint focus:border-accent"
-          :placeholder="d.bodyType === 'json' ? '{ &quot;name&quot;: &quot;ENPost&quot; }' : ''"
-          spellcheck="false"
-          aria-label="Request body"
-          @input="tabs.edit(tab.id, (x) => (x.body = ($event.target as HTMLTextAreaElement).value))"
-        />
-        <EmptyState v-else :title="`${BODY_LABEL[d.bodyType]} body`" badge="Phase 2" text="Form fields, file uploads and binary bodies are built with the HTTP engine in Phase 2. Syntax highlighting (CodeMirror) arrives then too." />
+        <div v-else-if="rawBody" class="min-h-[140px] flex-1 overflow-hidden rounded-md border border-line bg-panel focus-within:border-accent">
+          <CodeEditor
+            :model-value="d.body"
+            :language="LANG[d.bodyType as 'json' | 'xml' | 'text']"
+            :wrap="settings.settings.editorWordWrap"
+            :placeholder="d.bodyType === 'json' ? '{ &quot;name&quot;: &quot;ENPost&quot; }' : ''"
+            label="Request body"
+            @update:model-value="(v: string) => tabs.edit(tab.id, (x) => (x.body = v))"
+          />
+        </div>
+        <KeyValueEditor v-else-if="d.bodyType === 'urlencoded'" label="URL-encoded fields" :model-value="d.urlencoded" @update:model-value="tabs.edit(tab.id, (x) => (x.urlencoded = $event))" />
+        <FormDataEditor v-else-if="d.bodyType === 'form-data'" :model-value="d.form" @update:model-value="tabs.edit(tab.id, (x) => (x.form = $event))" />
+        <div v-else class="flex items-center gap-3">
+          <Button size="sm" @click="pickBinary"><FileUp class="h-3.5 w-3.5" />{{ d.binaryPath ? "Change file" : "Choose file" }}</Button>
+          <span v-if="d.binaryPath" class="flex min-w-0 items-center gap-1 font-mono text-[12px] text-muted">
+            <span class="truncate" :title="d.binaryPath">{{ d.binaryPath }}</span>
+            <button type="button" class="shrink-0 rounded p-0.5 text-faint hover:text-danger" aria-label="Remove file" @click="tabs.edit(tab.id, (x) => (x.binaryPath = ''))"><X class="h-3.5 w-3.5" /></button>
+          </span>
+          <span v-else class="text-xs text-muted">The file is sent as the whole body (Content-Type: application/octet-stream unless you set one).</span>
+        </div>
       </div>
       <EmptyState v-else-if="section === 'auth'" title="Authentication" badge="Phase 3" text="Basic, Bearer, API key and OAuth 2.0, with secrets kept in the system credential store." />
       <EmptyState v-else title="Scripts and tests" badge="Phase 4" text="Pre-request and post-response scripts run in an isolated JavaScript runtime with time and memory limits." />

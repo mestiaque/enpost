@@ -34,7 +34,7 @@ const save = () => void settings.update({ editorSplit: Math.round(split.value * 
         <RequestEditor :key="tabs.active.id" :tab="tabs.active" />
       </div>
       <ResizeHandle direction="horizontal" label="Resize request and response" @drag="onDrag" @step="(d) => (split = clamp(split + d * 0.05))" @end="save" />
-      <div class="min-h-[120px] flex-1"><ResponsePanel /></div>
+      <div class="min-h-[120px] flex-1"><ResponsePanel :key="tabs.active.id" :tab="tabs.active" /></div>
     </div>
     <div v-else class="flex-1 bg-bg">
       <EmptyState title="No open requests" text="Open a request tab to build a request. Saved collections come in Phase 3.">

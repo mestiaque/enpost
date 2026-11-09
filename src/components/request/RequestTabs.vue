@@ -71,7 +71,7 @@ const item = "flex cursor-default items-center rounded px-2 py-1.5 text-[13px] o
           </div>
         </ContextMenuTrigger>
         <ContextMenuPortal>
-          <ContextMenuContent class="z-[90] min-w-[180px] rounded-lg border border-line bg-panel p-1 shadow-pop animate-fade-in">
+          <ContextMenuContent class="z-[90] min-w-[180px] rounded-lg border border-line bg-panel p-1 shadow-pop data-[state=open]:animate-fade-in">
             <ContextMenuItem :class="item" @select="tabs.duplicate(t.id)">Duplicate</ContextMenuItem>
             <ContextMenuSeparator class="my-1 h-px bg-line" />
             <ContextMenuItem :class="item" @select="tabs.close(t.id)">Close<span class="ml-auto pl-4 text-[11px] text-faint">Ctrl+W</span></ContextMenuItem>

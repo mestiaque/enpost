@@ -62,6 +62,12 @@ const REDIRECTS = [5, 10, 20, 50].map((v) => ({ value: v, label: `${v}` }));
 
 // A constant: "{{" inside a template interpolation would end it early.
 const FONT_SAMPLE = "GET {{base_url}}/users?page=2 → 200 OK";
+const proxyInput = ref(s.value.proxyUrl);
+async function saveProxy() {
+  if (proxyInput.value.trim() === s.value.proxyUrl) return;
+  await store.update({ proxyUrl: proxyInput.value.trim() });
+  proxyInput.value = s.value.proxyUrl; // rejected values snap back
+}
 const fontFamily = ref(s.value.editorFontFamily);
 const saveFont = () => fontFamily.value !== s.value.editorFontFamily && void store.update({ editorFontFamily: fontFamily.value.trim() });
 
@@ -111,7 +117,7 @@ onMounted(async () => {
       <div class="min-w-0 flex-1 overflow-y-auto px-6 py-2">
         <template v-if="ui.settingsSection === 'general'">
           <SettingRow label="Save changes automatically" hint="Applies to saved requests (Phase 3)"><Switch v-model="autosave" label="Autosave" /></SettingRow>
-          <SettingRow label="Keep request history for" hint="History is recorded from Phase 2; secrets are removed before saving">
+          <SettingRow label="Keep request history for" hint="Older requests and their stored responses are deleted; secrets are never saved">
             <Select :model-value="s.historyRetentionDays" :options="RETENTION" label="History retention" @update:model-value="(v: number) => store.update({ historyRetentionDays: v })" />
           </SettingRow>
           <SettingRow label="Check for updates automatically" hint="Once a day, from GitHub releases (update installer: Phase 6)"><Switch v-model="checkUpdates" label="Check for updates" /></SettingRow>
@@ -157,18 +163,28 @@ onMounted(async () => {
           <SettingRow label="Font family" hint="A CSS font list; empty uses JetBrains Mono, Cascadia Mono or Ubuntu Mono">
             <input v-model="fontFamily" class="h-8 w-56 rounded-md border border-line bg-panel px-2.5 font-mono text-[12px] outline-none focus:border-accent" placeholder="Fira Code, monospace" spellcheck="false" @blur="saveFont" @keydown.enter="saveFont" />
           </SettingRow>
-          <SettingRow label="Wrap long lines" hint="In the code editors (Phase 2)"><Switch v-model="wordWrap" label="Word wrap" /></SettingRow>
+          <SettingRow label="Wrap long lines" hint="In the body editor and the response viewer"><Switch v-model="wordWrap" label="Word wrap" /></SettingRow>
           <div class="mt-3 rounded-lg border border-line bg-raised/50 p-3 font-mono text-[length:var(--editor-font-size)]" :style="{ fontFamily: 'var(--editor-font)' }">
             {{ FONT_SAMPLE }}
           </div>
         </template>
 
         <template v-else-if="ui.settingsSection === 'requests'">
-          <p class="py-3 text-xs text-muted">Defaults for every request. They take effect with the HTTP engine (Phase 2); a request can override them.</p>
+          <p class="py-3 text-xs text-muted">Used for every request ENPost sends.</p>
           <SettingRow label="Timeout"><Select :model-value="s.requestTimeoutMs" :options="TIMEOUTS" label="Timeout" @update:model-value="(v: number) => store.update({ requestTimeoutMs: v })" /></SettingRow>
           <SettingRow label="Follow redirects"><Switch v-model="followRedirects" label="Follow redirects" /></SettingRow>
           <SettingRow label="Maximum redirects">
             <Select :model-value="s.maxRedirects" :options="REDIRECTS" label="Maximum redirects" @update:model-value="(v: number) => store.update({ maxRedirects: v })" />
+          </SettingRow>
+          <SettingRow label="Proxy" hint="Empty uses the system proxy variables (HTTP_PROXY, HTTPS_PROXY)">
+            <input
+              v-model="proxyInput"
+              class="h-8 w-56 rounded-md border border-line bg-panel px-2.5 font-mono text-[12px] outline-none focus:border-accent"
+              placeholder="http://127.0.0.1:8080"
+              spellcheck="false"
+              @blur="saveProxy"
+              @keydown.enter="saveProxy"
+            />
           </SettingRow>
           <SettingRow label="Verify TLS certificates" hint="Keep this on. Turning it off asks for confirmation."><Switch v-model="verifyTls" label="Verify TLS certificates" /></SettingRow>
         </template>

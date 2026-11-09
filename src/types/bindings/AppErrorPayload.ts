@@ -5,6 +5,7 @@
  */
 export type AppErrorPayload = { 
 /**
- * "database" | "validation" | "notFound" | "io" | "internal"
+ * "database" | "validation" | "notFound" | "io" | "internal" | "invalidRequest" | "connect"
+ * | "timeout" | "tls" | "redirect" | "network" | "cancelled"
  */
 kind: string, message: string, };

@@ -4,6 +4,12 @@ import { X } from "lucide-vue-next";
 import { cn } from "@/utils/cn";
 
 const open = defineModel<boolean>("open", { required: true });
+
+/** App shortcuts must not fire behind a dialog, but Escape has to reach reka (it listens on
+ *  document) or the dialog cannot be closed from the keyboard. */
+function onKeydown(e: KeyboardEvent) {
+  if (e.key !== "Escape") e.stopPropagation();
+}
 // `top` places the dialog high on the screen (command palette); default is centred.
 // Positioning uses a flex wrapper, not translate: the open animation sets `transform`
 // and would otherwise cancel a translate-based centring.
@@ -17,7 +23,7 @@ withDefaults(defineProps<{ title: string; description?: string; class?: string; 
       <div :class="['pointer-events-none fixed inset-0 z-[81] flex justify-center p-4', position === 'top' ? 'items-start pt-[14vh]' : 'items-center']">
       <DialogContent
         :class="cn('pointer-events-auto flex max-h-[88vh] flex-col overflow-hidden rounded-xl border border-line bg-panel shadow-pop outline-none animate-scale-in', $props.class)"
-        @keydown.stop
+        @keydown="onKeydown"
       >
         <div v-if="!hideHeader" class="flex items-center justify-between border-b border-line px-5 py-3.5">
           <div>

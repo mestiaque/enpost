@@ -19,6 +19,7 @@ export const DEFAULT_SETTINGS: Settings = {
   followRedirects: true,
   maxRedirects: 10,
   verifyTls: true,
+  proxyUrl: "",
   autosave: true,
   historyRetentionDays: 30,
   checkUpdates: true,

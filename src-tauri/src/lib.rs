@@ -24,12 +24,18 @@ pub fn run() {
                 let _ = w.set_focus();
             }
         }))
+        .plugin(tauri_plugin_dialog::init())
         .plugin(
             tauri_plugin_log::Builder::new()
                 .level(if cfg!(debug_assertions) { log::LevelFilter::Debug } else { log::LevelFilter::Info })
                 // Dependencies log request details at debug level; keep them out of the file.
                 .level_for("sqlx", log::LevelFilter::Warn)
                 .level_for("tao", log::LevelFilter::Warn)
+                // Request URLs and headers must never reach the log file.
+                .level_for("reqwest", log::LevelFilter::Warn)
+                .level_for("hyper", log::LevelFilter::Warn)
+                .level_for("hyper_util", log::LevelFilter::Warn)
+                .level_for("rustls", log::LevelFilter::Warn)
                 .max_file_size(2_000_000)
                 .build(),
         )
@@ -37,7 +43,12 @@ pub fn run() {
             let data_dir = app.path().app_data_dir()?;
             let db = tauri::async_runtime::block_on(Database::open(&data_dir.join("enpost.db"))).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
             let settings = tauri::async_runtime::block_on(SettingsService::load(db.clone())).map_err(|e| Box::new(std::io::Error::other(e.to_string())))?;
-            app.manage(AppState { db, settings, data_dir });
+            let bodies_dir = data_dir.join("bodies");
+            let retention = tauri::async_runtime::block_on(settings.get()).history_retention_days;
+            if let Err(e) = tauri::async_runtime::block_on(modules::history::prune(&db, retention)) {
+                log::warn!("history cleanup failed: {e}");
+            }
+            app.manage(AppState { db, settings, http: modules::http::HttpEngine::new(bodies_dir.clone()), data_dir, bodies_dir });
             log::info!("ENPost {} started", app.package_info().version);
             Ok(())
         })
@@ -46,6 +57,11 @@ pub fn run() {
             commands::settings::get_settings,
             commands::settings::update_settings,
             commands::settings::reset_settings,
+            commands::http::send_request,
+            commands::http::cancel_request,
+            commands::http::save_response_body,
+            commands::history::list_history,
+            commands::history::clear_history,
         ])
         .run(tauri::generate_context!());
     if let Err(e) = result {

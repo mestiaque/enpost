@@ -4,4 +4,4 @@ import type { Theme } from "./Theme";
 /**
  * Changed fields only; every field is optional.
  */
-export type SettingsPatch = { theme?: Theme, accent?: string, reduceMotion?: boolean, editorFontSize?: number, editorFontFamily?: string, editorWordWrap?: boolean, sidebarCollapsed?: boolean, sidebarWidth?: number, editorSplit?: number, requestTimeoutMs?: number, followRedirects?: boolean, maxRedirects?: number, verifyTls?: boolean, autosave?: boolean, historyRetentionDays?: number, checkUpdates?: boolean, };
+export type SettingsPatch = { theme?: Theme, accent?: string, reduceMotion?: boolean, editorFontSize?: number, editorFontFamily?: string, editorWordWrap?: boolean, sidebarCollapsed?: boolean, sidebarWidth?: number, editorSplit?: number, requestTimeoutMs?: number, followRedirects?: boolean, maxRedirects?: number, verifyTls?: boolean, proxyUrl?: string, autosave?: boolean, historyRetentionDays?: number, checkUpdates?: boolean, };
