@@ -40,10 +40,20 @@ tested against a local server (Rust integration tests) and in the real app (smok
 - ✅ Tests: Rust 40 (engine against a local axum server), frontend 24, smoke test sends a real request
 - ⬜ Moved on: custom CA certificates and client certificates (Phase 3, with the credential store); a separate DNS/connect/TLS breakdown (reqwest reports only time to headers and download)
 
-## Phase 3: Workspace ⬜
+## Phase 3: Workspace (in progress)
 
-- ⬜ Workspaces, collections, nested folders, saved requests, favourites, drag-and-drop order
-- ⬜ Autosave, Ctrl+S, descriptions, search, context menus
+**3a: collections ✅**
+- ✅ Workspaces (first run creates "My Workspace"; switch, create, rename, delete; the last one stays)
+- ✅ Collections, nested folders, saved requests; the sidebar tree in stored order
+- ✅ Drag and drop: reorder collections, folders and requests; move into folders or other collections (a folder takes its contents along and cannot go into itself)
+- ✅ Context menus: new request or folder, rename, duplicate, favourite, delete (with confirmation)
+- ✅ Favourites section, search by name or URL (keeps the path to each match)
+- ✅ Ctrl+S saves, Save as for a new request (choose collection or folder, or create a collection), autosave after edits (setting), tabs follow renames and deletes
+- ✅ Tests: Rust 4 service tests (tree, save, move rules, cascade); frontend tree, drop-index and mapping tests; smoke test creates a collection, saves with Ctrl+S and finds it after a restart
+- ⬜ Request descriptions editor (stored already, no editor yet)
+- ⬜ Reopen the tabs that were open last time
+
+**Still open in Phase 3**
 - ⬜ Environments and variables at every scope, precedence, `{{var}}` highlighting, unresolved warnings
 - ⬜ Secret variables in the OS credential manager
 - ⬜ Auth: Basic, Bearer, API key, OAuth 2.0; collection-level auth

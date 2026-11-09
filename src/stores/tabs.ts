@@ -4,7 +4,10 @@ import { api, inTauri, toIpcError } from "@/services/ipc";
 import { buildHttpRequest, onProgress } from "@/services/http";
 import type { HttpMethod, KeyValue, RequestDraft, RequestTab } from "@/types";
 import { paramsFromUrl, urlWithParams } from "@/utils/url";
+import { draftToDefinition, savedToDraft } from "@/services/requestMapping";
 import { useHistory } from "./history";
+import { useUi } from "./ui";
+import { useWorkspace } from "./workspace";
 import { useSettings } from "./settings";
 
 export function newId(): string {
@@ -90,7 +93,89 @@ export const useTabs = defineStore("tabs", () => {
     if (!t) return;
     fn(t.draft);
     t.dirty = true;
-    t.name = tabTitle(t.draft);
+    if (!t.savedId) t.name = tabTitle(t.draft);
+    else scheduleAutosave(t.id);
+  }
+
+  // ---- saved requests ----
+
+  /** Open a saved request (or switch to its tab if it is already open). */
+  async function openSaved(savedId: string) {
+    const existing = tabs.value.find((t) => t.savedId === savedId);
+    if (existing) {
+      activeId.value = existing.id;
+      return;
+    }
+    const r = await api.getRequest(savedId);
+    const t = open(savedToDraft(r));
+    t.savedId = r.id;
+    t.name = r.name;
+    // Reuse an untouched empty tab instead of piling up blank ones.
+    const blank = tabs.value.find((x) => x.id !== t.id && !x.savedId && !x.dirty && !x.draft.url && x.exec.state === "idle");
+    if (blank) close(blank.id);
+    activeId.value = t.id;
+  }
+
+  const autosaveTimers = new Map<string, number>();
+  function scheduleAutosave(tabId: string) {
+    if (!useSettings().settings.autosave) return;
+    window.clearTimeout(autosaveTimers.get(tabId));
+    autosaveTimers.set(tabId, window.setTimeout(() => void save(tabId, { quiet: true }), 700));
+  }
+
+  /** Ctrl+S: write a saved request; an unsaved one opens "Save as". */
+  async function save(tabId: string, opts: { quiet?: boolean } = {}) {
+    const t = tabs.value.find((x) => x.id === tabId);
+    if (!t) return;
+    window.clearTimeout(autosaveTimers.get(tabId));
+    if (!t.savedId) {
+      if (!opts.quiet) useUi().openSaveAs(tabId);
+      return;
+    }
+    const snapshot = JSON.stringify(t.draft);
+    try {
+      const r = await api.saveRequest(t.savedId, { method: t.draft.method, url: t.draft.url, definition: draftToDefinition(t.draft) });
+      // Edits made while saving keep the tab dirty (and are saved by the next autosave).
+      if (JSON.stringify(t.draft) === snapshot) t.dirty = false;
+      t.name = r.name;
+      void useWorkspace().refresh();
+      if (!opts.quiet) useUi().toast({ kind: "success", title: "Saved", detail: r.name });
+    } catch (e) {
+      const err = toIpcError(e);
+      if (err.kind === "notFound") t.savedId = undefined; // deleted meanwhile: now an unsaved tab
+      useUi().toast({ kind: "error", title: "Could not save", detail: err.message });
+    }
+  }
+
+  /** "Save as": create the saved request and bind the tab to it. */
+  async function saveAs(tabId: string, collectionId: string, folderId: string | null, name: string) {
+    const t = tabs.value.find((x) => x.id === tabId);
+    if (!t) return false;
+    try {
+      const r = await api.createRequest({ collectionId, folderId, name, method: t.draft.method, url: t.draft.url, definition: draftToDefinition(t.draft) });
+      t.savedId = r.id;
+      t.name = r.name;
+      t.dirty = false;
+      await useWorkspace().refresh();
+      useUi().toast({ kind: "success", title: "Saved", detail: r.name });
+      return true;
+    } catch (e) {
+      useUi().toast({ kind: "error", title: "Could not save", detail: toIpcError(e).message });
+      return false;
+    }
+  }
+
+  /** Keep tabs in step with the tree: renamed requests rename tabs, deleted ones become unsaved. */
+  function syncWithTree(requests: { id: string; name: string }[]) {
+    const byId = new Map(requests.map((r) => [r.id, r.name]));
+    for (const t of tabs.value) {
+      if (!t.savedId) continue;
+      const name = byId.get(t.savedId);
+      if (name === undefined) {
+        t.savedId = undefined;
+        t.dirty = true;
+      } else t.name = name;
+    }
   }
 
   /** URL typed by the user: the Params table follows the query string. */
@@ -150,5 +235,5 @@ export const useTabs = defineStore("tabs", () => {
     if (t?.exec.state === "sending") void api.cancelRequest(t.exec.requestId).catch(() => {});
   }
 
-  return { tabs, activeId, active, open, send, cancel, activate, close, closeOthers, duplicate, move, cycle, edit, setUrl, setParams, setMethod };
+  return { tabs, activeId, active, open, openSaved, save, saveAs, syncWithTree, send, cancel, activate, close, closeOthers, duplicate, move, cycle, edit, setUrl, setParams, setMethod };
 });

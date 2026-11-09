@@ -48,7 +48,7 @@ pub fn run() {
             if let Err(e) = tauri::async_runtime::block_on(modules::history::prune(&db, retention)) {
                 log::warn!("history cleanup failed: {e}");
             }
-            app.manage(AppState { db, settings, http: modules::http::HttpEngine::new(bodies_dir.clone()), data_dir, bodies_dir });
+            app.manage(AppState { collections: modules::collections::CollectionsService::new(db.clone()), db, settings, http: modules::http::HttpEngine::new(bodies_dir.clone()), data_dir, bodies_dir });
             log::info!("ENPost {} started", app.package_info().version);
             Ok(())
         })
@@ -62,6 +62,21 @@ pub fn run() {
             commands::http::save_response_body,
             commands::history::list_history,
             commands::history::clear_history,
+            commands::collections::list_workspaces,
+            commands::collections::create_workspace,
+            commands::collections::rename_workspace,
+            commands::collections::delete_workspace,
+            commands::collections::workspace_tree,
+            commands::collections::create_collection,
+            commands::collections::create_folder,
+            commands::collections::create_request,
+            commands::collections::get_request,
+            commands::collections::save_request,
+            commands::collections::duplicate_request,
+            commands::collections::rename_item,
+            commands::collections::delete_item,
+            commands::collections::set_favorite,
+            commands::collections::move_item,
         ])
         .run(tauri::generate_context!());
     if let Err(e) = result {

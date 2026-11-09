@@ -18,7 +18,7 @@ export const SHORTCUTS: Shortcut[] = [
   { keys: "Ctrl+B", label: "Show or hide the sidebar" },
   { keys: "Ctrl+,", label: "Settings" },
   { keys: "Ctrl+Enter", label: "Send request (Enter in the URL bar too)" },
-  { keys: "Ctrl+S", label: "Save request (Phase 3)" },
+  { keys: "Ctrl+S", label: "Save request (Save as for a new one)" },
 ];
 
 /** Not built yet: say so instead of silently doing nothing. */
@@ -44,7 +44,7 @@ export function useShortcuts() {
     else if (k === "tab") tabs.cycle(e.shiftKey ? -1 : 1);
     else if (k === "b") void settings.update({ sidebarCollapsed: !settings.settings.sidebarCollapsed });
     else if (k === "enter") tabs.activeId && void tabs.send(tabs.activeId);
-    else if (k === "s") notYet("Saving requests", 3);
+    else if (k === "s") tabs.activeId && void tabs.save(tabs.activeId);
     else handled = false;
     if (handled) e.preventDefault();
   };

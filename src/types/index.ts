@@ -17,6 +17,16 @@ export type { RequestOptions } from "./bindings/RequestOptions";
 export type { ResponseBody } from "./bindings/ResponseBody";
 export type { ResponseCookie } from "./bindings/ResponseCookie";
 export type { Timing } from "./bindings/Timing";
+export type { CollectionNode } from "./bindings/CollectionNode";
+export type { FolderNode } from "./bindings/FolderNode";
+export type { ItemKind } from "./bindings/ItemKind";
+export type { MoveTarget } from "./bindings/MoveTarget";
+export type { RequestDefinition } from "./bindings/RequestDefinition";
+export type { RequestPatch } from "./bindings/RequestPatch";
+export type { RequestSummary } from "./bindings/RequestSummary";
+export type { SavedRequest } from "./bindings/SavedRequest";
+export type { Workspace } from "./bindings/Workspace";
+export type { WorkspaceTree } from "./bindings/WorkspaceTree";
 import type { HttpResponse } from "./bindings/HttpResponse";
 
 // Frontend-only types.
@@ -69,5 +79,7 @@ export interface RequestTab {
   draft: RequestDraft;
   /** Changed since it was opened or last saved. */
   dirty: boolean;
+  /** The saved request this tab edits (absent for an unsaved request). */
+  savedId?: string;
   exec: Execution;
 }

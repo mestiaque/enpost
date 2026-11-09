@@ -41,4 +41,8 @@ proxyUrl: string, autosave: boolean,
 /**
  * 0 = keep forever; otherwise 1–3650 days.
  */
-historyRetentionDays: number, checkUpdates: boolean, };
+historyRetentionDays: number, checkUpdates: boolean, 
+/**
+ * Workspace shown in the sidebar; empty = the first one.
+ */
+activeWorkspaceId: string, };

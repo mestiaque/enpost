@@ -39,11 +39,19 @@ shot 02-url-params
 xdotool key ctrl+a; xdotool type --delay 8 "http://127.0.0.1:8765/users.json?page=1"
 xdotool key ctrl+Return
 shot 02b-response 2.5
+# Phase 3: a collection from the sidebar's +, then Ctrl+S saves the request into it.
+xdotool mousemove $((X + 306)) $((Y + 64)); sleep 0.4; xdotool click 1; sleep 0.8
+xdotool type --delay 15 "Demo API"; xdotool key Return; sleep 1
+xdotool mousemove $((X + 800)) $((Y + 300)); sleep 0.2
+xdotool key ctrl+s; sleep 1; shot 02c-save-as 0.3
+xdotool key ctrl+a; xdotool type --delay 15 "List users"; xdotool key Return
+shot 02d-saved 1.5
 xdotool key ctrl+k; shot 03-palette
 xdotool type --delay 20 "glass"; xdotool key Return; shot 04-glass
 xdotool key ctrl+comma; shot 05-settings
 xdotool key Escape; sleep 0.5
 echo "db settings: $(q "SELECT key, value FROM settings")"
+echo "saved: $(q "SELECT c.name, r.name, r.method, r.url FROM requests r JOIN collections c ON c.id = r.collection_id")"
 echo "history: $(q "SELECT h.method, h.url, m.status, m.size_bytes FROM request_history h JOIN response_metadata m ON m.history_id = h.id")"
 # History panel (activity bar, third icon).
 xdotool mousemove $((X + 24)) $((Y + 140)); sleep 0.4; xdotool click 1; shot 05b-history

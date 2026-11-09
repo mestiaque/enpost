@@ -4,7 +4,22 @@
  * The frontend never performs API requests itself: those run in Rust (Phase 2).
  */
 import { invoke } from "@tauri-apps/api/core";
-import type { AppErrorPayload, AppInfo, HistoryEntry, HttpRequest, HttpResponse, Settings, SettingsPatch } from "@/types";
+import type {
+  AppErrorPayload,
+  AppInfo,
+  HistoryEntry,
+  HttpRequest,
+  HttpResponse,
+  ItemKind,
+  MoveTarget,
+  RequestDefinition,
+  RequestPatch,
+  SavedRequest,
+  Settings,
+  SettingsPatch,
+  Workspace,
+  WorkspaceTree,
+} from "@/types";
 
 interface Commands {
   app_info: { args: Record<string, never>; result: AppInfo };
@@ -16,6 +31,21 @@ interface Commands {
   save_response_body: { args: { historyId: string; destination: string }; result: null };
   list_history: { args: { limit: number | null }; result: HistoryEntry[] };
   clear_history: { args: Record<string, never>; result: null };
+  list_workspaces: { args: Record<string, never>; result: Workspace[] };
+  create_workspace: { args: { name: string }; result: Workspace };
+  rename_workspace: { args: { id: string; name: string }; result: null };
+  delete_workspace: { args: { id: string }; result: null };
+  workspace_tree: { args: { workspaceId: string }; result: WorkspaceTree };
+  create_collection: { args: { workspaceId: string; name: string }; result: string };
+  create_folder: { args: { collectionId: string; parentId: string | null; name: string }; result: string };
+  create_request: { args: { collectionId: string; folderId: string | null; name: string; method: string; url: string; definition: RequestDefinition }; result: SavedRequest };
+  get_request: { args: { id: string }; result: SavedRequest };
+  save_request: { args: { id: string; patch: RequestPatch }; result: SavedRequest };
+  duplicate_request: { args: { id: string }; result: SavedRequest };
+  rename_item: { args: { kind: ItemKind; id: string; name: string }; result: null };
+  delete_item: { args: { kind: ItemKind; id: string }; result: null };
+  set_favorite: { args: { id: string; favorite: boolean }; result: null };
+  move_item: { args: { kind: ItemKind; id: string; target: MoveTarget }; result: null };
 }
 
 export type CommandName = keyof Commands;
@@ -61,4 +91,19 @@ export const api = {
   saveResponseBody: (historyId: string, destination: string) => call("save_response_body", { historyId, destination }),
   listHistory: (limit: number | null = null) => call("list_history", { limit }),
   clearHistory: () => call("clear_history"),
+  listWorkspaces: () => call("list_workspaces"),
+  createWorkspace: (name: string) => call("create_workspace", { name }),
+  renameWorkspace: (id: string, name: string) => call("rename_workspace", { id, name }),
+  deleteWorkspace: (id: string) => call("delete_workspace", { id }),
+  workspaceTree: (workspaceId: string) => call("workspace_tree", { workspaceId }),
+  createCollection: (workspaceId: string, name: string) => call("create_collection", { workspaceId, name }),
+  createFolder: (collectionId: string, parentId: string | null, name: string) => call("create_folder", { collectionId, parentId, name }),
+  createRequest: (a: { collectionId: string; folderId: string | null; name: string; method: string; url: string; definition: RequestDefinition }) => call("create_request", a),
+  getRequest: (id: string) => call("get_request", { id }),
+  saveRequest: (id: string, patch: RequestPatch) => call("save_request", { id, patch }),
+  duplicateRequest: (id: string) => call("duplicate_request", { id }),
+  renameItem: (kind: ItemKind, id: string, name: string) => call("rename_item", { kind, id, name }),
+  deleteItem: (kind: ItemKind, id: string) => call("delete_item", { kind, id }),
+  setFavorite: (id: string, favorite: boolean) => call("set_favorite", { id, favorite }),
+  moveItem: (kind: ItemKind, id: string, target: MoveTarget) => call("move_item", { kind, id, target }),
 };

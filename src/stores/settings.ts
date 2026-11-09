@@ -23,6 +23,7 @@ export const DEFAULT_SETTINGS: Settings = {
   autosave: true,
   historyRetentionDays: 30,
   checkUpdates: true,
+  activeWorkspaceId: "",
 };
 
 export const useSettings = defineStore("settings", () => {

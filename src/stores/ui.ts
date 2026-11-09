@@ -16,7 +16,15 @@ export interface ConfirmRequest {
   resolve: (ok: boolean) => void;
 }
 
-export type DialogKind = null | "settings" | "palette";
+export interface PromptRequest {
+  title: string;
+  label?: string;
+  initial: string;
+  confirmLabel: string;
+  resolve: (value: string | null) => void;
+}
+
+export type DialogKind = null | "settings" | "palette" | "save-as";
 export type SidebarPanel = "collections" | "history";
 
 let toastId = 0;
@@ -29,6 +37,23 @@ export const useUi = defineStore("ui", () => {
   const settingsSection = ref("general");
   const confirmReq = ref<ConfirmRequest | null>(null);
   const sidebarPanel = ref<SidebarPanel>("collections");
+  const promptReq = ref<PromptRequest | null>(null);
+  /** Tab being saved by the "Save as" dialog. */
+  const saveAsTabId = ref<string | null>(null);
+  function openSaveAs(tabId: string) {
+    saveAsTabId.value = tabId;
+    dialog.value = "save-as";
+  }
+  /** Ask for a short text (a name). Resolves to null when cancelled. */
+  function prompt(o: { title: string; label?: string; initial?: string; confirmLabel?: string }): Promise<string | null> {
+    return new Promise((resolve) => {
+      promptReq.value = { initial: "", confirmLabel: "OK", ...o, resolve };
+    });
+  }
+  function answerPrompt(v: string | null) {
+    promptReq.value?.resolve(v);
+    promptReq.value = null;
+  }
 
   function toast(t: Omit<Toast, "id">, ttl = 4000) {
     const id = ++toastId;
@@ -56,5 +81,5 @@ export const useUi = defineStore("ui", () => {
     confirmReq.value?.resolve(ok);
     confirmReq.value = null;
   }
-  return { sidebarPanel, toasts, dialog, paletteMode, settingsSection, confirmReq, toast, dismiss, openSettings, openPalette, confirm, answerConfirm };
+  return { saveAsTabId, openSaveAs, promptReq, prompt, answerPrompt, sidebarPanel, toasts, dialog, paletteMode, settingsSection, confirmReq, toast, dismiss, openSettings, openPalette, confirm, answerConfirm };
 });

@@ -53,6 +53,8 @@ pub struct Settings {
     /// 0 = keep forever; otherwise 1–3650 days.
     pub history_retention_days: u32,
     pub check_updates: bool,
+    /// Workspace shown in the sidebar; empty = the first one.
+    pub active_workspace_id: String,
 }
 
 impl Default for Settings {
@@ -75,6 +77,7 @@ impl Default for Settings {
             autosave: true,
             history_retention_days: 30,
             check_updates: true,
+            active_workspace_id: String::new(),
         }
     }
 }
@@ -101,6 +104,7 @@ pub struct SettingsPatch {
     pub autosave: Option<bool>,
     pub history_retention_days: Option<u32>,
     pub check_updates: Option<bool>,
+    pub active_workspace_id: Option<String>,
 }
 
 fn is_hex_colour(s: &str) -> bool {
@@ -158,6 +162,9 @@ impl Settings {
             // Credentials would sit in SQLite as plain text; they need the credential store (Phase 3).
             return bad("A proxy with a user name and password is not supported yet");
         }
+        if self.active_workspace_id.len() > 64 {
+            return bad("Not a workspace id");
+        }
         if self.history_retention_days > 3650 {
             return bad("History can be kept for at most 3650 days");
         }
@@ -172,7 +179,7 @@ impl Settings {
         }
         set!(
             theme, accent, reduce_motion, editor_font_size, editor_font_family, editor_word_wrap, sidebar_collapsed, sidebar_width, editor_split,
-            request_timeout_ms, follow_redirects, max_redirects, verify_tls, proxy_url, autosave, history_retention_days, check_updates
+            request_timeout_ms, follow_redirects, max_redirects, verify_tls, proxy_url, autosave, history_retention_days, check_updates, active_workspace_id
         );
         s
     }

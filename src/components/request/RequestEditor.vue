@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { open as openFile } from "@tauri-apps/plugin-dialog";
-import { FileUp, Send, X } from "lucide-vue-next";
+import { FileUp, Save, Send, X } from "lucide-vue-next";
+import IconButton from "@/components/ui/IconButton.vue";
 import { computed, ref } from "vue";
 import Button from "@/components/ui/Button.vue";
 import CodeEditor from "@/components/editor/CodeEditor.vue";
@@ -67,6 +68,7 @@ const rawBody = computed(() => ["json", "text", "xml"].includes(d.value.bodyType
           @keydown.enter.exact="tabs.send(tab.id)"
         />
       </div>
+      <IconButton :label="tab.savedId ? 'Save' : 'Save as…'" shortcut="Ctrl+S" class="h-9 w-9" @click="tabs.save(tab.id)"><Save class="h-4 w-4" /></IconButton>
       <Button v-if="sending" class="h-9 w-[92px]" @click="tabs.cancel(tab.id)"><Spinner class="h-3.5 w-3.5" />Cancel</Button>
       <Tooltip v-else label="Send" shortcut="Ctrl+Enter">
         <Button variant="primary" class="h-9 w-[92px]" :disabled="!d.url.trim()" @click="tabs.send(tab.id)"><Send class="h-3.5 w-3.5" />Send</Button>
