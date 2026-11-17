@@ -53,7 +53,7 @@ function preview(r: TreeRow): string {
   if (r.kind === "string") return JSON.stringify(r.value);
   return String(r.value);
 }
-const COLOR: Record<TreeRow["kind"], string> = { string: "text-[#22c55e]", number: "text-[#f59e0b]", boolean: "text-[#f59e0b]", null: "text-faint", object: "text-muted", array: "text-muted" };
+const COLOR: Record<TreeRow["kind"], string> = { string: "text-[rgb(var(--syn-string))]", number: "text-[rgb(var(--syn-number))]", boolean: "text-[rgb(var(--syn-number))]", null: "text-faint", object: "text-muted", array: "text-muted" };
 
 async function copy(text: string, what: string) {
   await navigator.clipboard.writeText(text);

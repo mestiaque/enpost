@@ -64,7 +64,7 @@ const followRedirects = bool("followRedirects");
 const THEMES: { id: Theme; label: string; bg: string; side: string; bar: string }[] = [
   { id: "dark", label: "Dark", bg: "#131315", side: "#19191c", bar: "#2c2c32" },
   { id: "light", label: "Light", bg: "#f4f4f6", side: "#fcfcfd", bar: "#dcdce2" },
-  { id: "glass", label: "Glass", bg: "linear-gradient(135deg,#3b2a7a,#7a2550 55%,#1d4f73)", side: "rgba(255,255,255,.12)", bar: "rgba(255,255,255,.28)" },
+  { id: "glass", label: "Glass", bg: "linear-gradient(155deg, #f4f7fd 22%, rgb(var(--accent) / 0.55) 48%, #e9f0fc 66%, rgb(var(--accent) / 0.85) 100%)", side: "rgba(255,255,255,.6)", bar: "rgba(255,255,255,.8)" },
   { id: "system", label: "System", bg: "linear-gradient(90deg,#131315 50%,#f4f4f6 50%)", side: "rgba(128,128,128,.3)", bar: "rgba(128,128,128,.5)" },
 ];
 const ACCENTS = ["#3b82f6", "#6366f1", "#8b5cf6", "#ec4899", "#ef4444", "#f97316", "#eab308", "#22c55e", "#14b8a6", "#06b6d4"];

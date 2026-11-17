@@ -34,11 +34,11 @@ const editable = new Compartment();
 const languageExt = (l: CodeLanguage): Extension => (l === "json" ? json() : l === "xml" ? xml() : l === "html" ? html() : []);
 
 const highlight = HighlightStyle.define([
-  { tag: [t.propertyName], color: "rgb(var(--accent))" },
-  { tag: [t.string, t.special(t.string)], color: "#22c55e" },
-  { tag: [t.number, t.bool, t.null, t.atom], color: "#f59e0b" },
-  { tag: [t.keyword, t.tagName], color: "#c084fc" },
-  { tag: [t.attributeName], color: "#38bdf8" },
+  { tag: [t.propertyName], color: "var(--syn-key)" },
+  { tag: [t.string, t.special(t.string)], color: "rgb(var(--syn-string))" },
+  { tag: [t.number, t.bool, t.null, t.atom], color: "rgb(var(--syn-number))" },
+  { tag: [t.keyword, t.tagName], color: "rgb(var(--syn-type))" },
+  { tag: [t.attributeName], color: "rgb(var(--syn-name))" },
   { tag: [t.comment], color: "rgb(var(--faint))", fontStyle: "italic" },
   { tag: [t.punctuation, t.bracket, t.separator], color: "rgb(var(--muted))" },
 ]);

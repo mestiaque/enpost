@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { getCurrentWindow } from "@tauri-apps/api/window";
-import { Monitor, Moon, PanelLeft, Search, Settings as Cog, Sparkles, Sun } from "lucide-vue-next";
-import { computed } from "vue";
+import { PanelLeft, Search, Settings as Cog } from "lucide-vue-next";
 import IconButton from "@/components/ui/IconButton.vue";
 import Kbd from "@/components/ui/Kbd.vue";
 import WindowControls from "@/components/ui/WindowControls.vue";
@@ -9,16 +8,9 @@ import appIcon from "@/assets/enpost-icon.svg";
 import { inTauri } from "@/services/ipc";
 import { useSettings } from "@/stores/settings";
 import { useUi } from "@/stores/ui";
-import type { Theme } from "@/types";
 
 const settings = useSettings();
 const ui = useUi();
-const ORDER: Theme[] = ["dark", "light", "glass", "system"];
-const themeIcon = computed(() => ({ dark: Moon, light: Sun, glass: Sparkles, system: Monitor })[settings.settings.theme]);
-const nextTheme = () => {
-  const i = ORDER.indexOf(settings.settings.theme);
-  void settings.update({ theme: ORDER[(i + 1) % ORDER.length] });
-};
 
 /** Drag the window from empty bar space; double-click maximises. */
 function onMouseDown(e: MouseEvent) {
@@ -45,9 +37,6 @@ function onMouseDown(e: MouseEvent) {
       <span class="flex-1 truncate text-left">Search commands and tabs</span>
       <Kbd>Ctrl+K</Kbd>
     </button>
-    <IconButton :label="`Theme: ${settings.settings.theme}`" @click="nextTheme">
-      <component :is="themeIcon" class="h-4 w-4" />
-    </IconButton>
     <IconButton label="Settings" shortcut="Ctrl+," @click="ui.openSettings()"><Cog class="h-4 w-4" /></IconButton>
     <WindowControls />
   </header>

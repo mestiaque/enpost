@@ -14,7 +14,7 @@ export function useTheme() {
   const apply = () => {
     const s = store.settings;
     const root = document.documentElement;
-    const dark = s.theme === "dark" || s.theme === "glass" || (s.theme === "system" && mq.matches);
+    const dark = s.theme === "dark" || (s.theme === "system" && mq.matches);
     root.classList.toggle("dark", dark);
     root.classList.toggle("light", !dark);
     root.classList.toggle("glass", s.theme === "glass");
