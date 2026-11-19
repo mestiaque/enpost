@@ -20,6 +20,8 @@ use tokio::io::AsyncWriteExt;
 use ts_rs::TS;
 
 const API_LATEST: &str = "https://api.github.com/repos/mestiaque/enpost/releases/latest";
+/// The latest release, as published to the public mestiaque/en-releases repository.
+const MANIFEST: &str = "https://raw.githubusercontent.com/mestiaque/en-releases/main/enpost.json";
 const ASSET_PREFIX: &str = "ENPost_";
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, TS)]
@@ -130,12 +132,22 @@ pub async fn check_update(app: AppHandle) -> AppResult<Option<UpdateInfo>> {
         return Ok(None);
     }
     let current = app.package_info().version.to_string();
-    let resp = client(&app, 20)?
-        .get(API_LATEST)
-        .header("Accept", "application/vnd.github+json")
-        .send()
-        .await
-        .map_err(|e| AppError::Network(format!("could not reach GitHub: {}", e.without_url())))?;
+    let client = client(&app, 20)?;
+    // The public en-releases list first (a plain file: no API rate limit, and the repository may be
+    // private), the repository's release API as a fallback.
+    let listed = match client.get(MANIFEST).send().await {
+        Ok(r) if r.status().is_success() => Some(r),
+        _ => None,
+    };
+    let resp = match listed {
+        Some(r) => r,
+        None => client
+            .get(API_LATEST)
+            .header("Accept", "application/vnd.github+json")
+            .send()
+            .await
+            .map_err(|e| AppError::Network(format!("could not reach GitHub: {}", e.without_url())))?,
+    };
     // No release published yet.
     if resp.status() == reqwest::StatusCode::NOT_FOUND {
         return Ok(None);
